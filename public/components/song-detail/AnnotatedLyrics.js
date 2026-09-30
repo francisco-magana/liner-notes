@@ -1,10 +1,8 @@
 import { useState } from 'preact/hooks';
 import { html } from '../../lib/html.js';
+import { classNames } from '../../lib/classNames.js';
 import { focusAtEnd } from '../../lib/dom.js';
 import { padNumber } from '../../lib/format.js';
-import { COLORS } from '../../lib/theme.js';
-
-const COLUMNS = 'grid-template-columns:30px minmax(0,1fr) minmax(0,1fr);column-gap:24px';
 
 /**
  * Lyrics next to their notes. Notes are keyed by the line's index in the raw
@@ -40,26 +38,26 @@ export function AnnotatedLyrics({ song, onEditLyrics, onSaveNotes }) {
   const closeNote = () => setActiveLine(null);
 
   return html`
-    <div style="display:flex;flex-direction:column">
-      <div class="mono muted" style="display:grid;${COLUMNS};font-weight:500;font-size:10px;letter-spacing:.06em;padding:8px 0">
+    <div class="annotated-lyrics">
+      <div class="mono muted annotated-lyrics__header">
         <span></span>
-        <div style="display:flex;justify-content:space-between">
+        <div class="annotated-lyrics__header-lyrics">
           <span>LYRICS</span>
-          <span class="click" onClick=${onEditLyrics} style="color:var(--ink);border-bottom:1px solid var(--ink)">EDIT LYRICS</span>
+          <span class="click annotated-lyrics__edit" onClick=${onEditLyrics}>EDIT LYRICS</span>
         </div>
         <span>NOTES — CLICK A LINE TO ANNOTATE</span>
       </div>
       ${toLyricLines(song).map(line => {
-        if (!line.hasText) return line.index > 0 ? html`<div key=${line.index} style="height:18px"></div>` : null;
+        if (!line.hasText) return line.index > 0 ? html`<div key=${line.index} class="annotated-lyrics__section-break"></div>` : null;
         const isActive = activeLine === line.index;
         return html`
-          <div key=${line.index} style="display:grid;${COLUMNS};align-items:baseline;border-top:1px solid var(--rule2);padding:6px 0;background:${isActive ? 'var(--hover)' : 'transparent'}">
-            <span class="mono muted" style="font-size:10px">${padNumber(line.number)}</span>
-            <span class="click h-lyric" onClick=${() => openLine(line.index)}
-              style="font-size:18px;line-height:1.3;color:${line.note || isActive ? 'var(--redInk)' : COLORS.ink}">${line.text}</span>
-            <div style="display:flex;flex-direction:column;gap:8px">
+          <div key=${line.index} class=${classNames('annotated-lyrics__line', isActive && 'is-active')}>
+            <span class="mono muted annotated-lyrics__number">${padNumber(line.number)}</span>
+            <span class=${classNames('click h-lyric annotated-lyrics__text', (line.note || isActive) && 'is-highlighted')}
+              onClick=${() => openLine(line.index)}>${line.text}</span>
+            <div class="annotated-lyrics__notes">
               ${line.note && !isActive && html`
-                <span class="click" onClick=${() => openLine(line.index)} style="font-size:14px;line-height:1.4;color:var(--ink3);text-wrap:pretty">${line.note}</span>`}
+                <span class="click annotated-lyrics__note" onClick=${() => openLine(line.index)}>${line.note}</span>`}
               ${isActive && html`
                 <${NoteEditor}
                   draft=${noteDraft}
@@ -81,14 +79,13 @@ function NoteEditor({ draft, onDraftChange, hasExistingNote, onSave, onRemove, o
   }
 
   return html`
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <textarea ref=${focusAtEnd} value=${draft} onInput=${event => onDraftChange(event.target.value)} onKeyDown=${handleKeyDown}
-        placeholder="What do you hear in this line?"
-        style="height:76px;resize:vertical;border:1px solid var(--ink);background:var(--field);padding:8px 10px;outline:none;font-size:14px;line-height:1.4"></textarea>
-      <div class="mono" style="display:flex;gap:12px;font-weight:500;font-size:10px;letter-spacing:.06em">
-        <span class="click" onClick=${onSave} style="background:var(--ink);color:var(--bg);padding:5px 10px">SAVE ⌘↵</span>
-        <span class="click" onClick=${onCancel} style="padding:5px 0">CANCEL</span>
-        ${hasExistingNote && html`<span class="click red" onClick=${onRemove} style="padding:5px 0">REMOVE</span>`}
+    <div class="note-editor">
+      <textarea class="note-editor__input" ref=${focusAtEnd} value=${draft} onInput=${event => onDraftChange(event.target.value)}
+        onKeyDown=${handleKeyDown} placeholder="What do you hear in this line?"></textarea>
+      <div class="mono note-editor__actions">
+        <span class="click note-editor__save" onClick=${onSave}>SAVE ⌘↵</span>
+        <span class="click note-editor__link" onClick=${onCancel}>CANCEL</span>
+        ${hasExistingNote && html`<span class="click red note-editor__link" onClick=${onRemove}>REMOVE</span>`}
       </div>
     </div>`;
 }

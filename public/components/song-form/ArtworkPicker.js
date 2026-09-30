@@ -1,7 +1,7 @@
 import { useRef } from 'preact/hooks';
 import { html } from '../../lib/html.js';
+import { imageStyle } from '../../lib/covers.js';
 import { cropImageToSquare } from '../../lib/dom.js';
-import { FORM_STRIPE_PATTERN, imageBackground } from '../../lib/theme.js';
 
 /** Square drop zone for album art. Images are cropped to a square in the browser before upload. */
 export function ArtworkPicker({ art, onChange, onError }) {
@@ -28,19 +28,19 @@ export function ArtworkPicker({ art, onChange, onError }) {
   }
 
   return html`
-    <input type="file" accept="image/*" ref=${fileInput} onChange=${handleFileChosen} style="display:none" />
-    <div class="mono click" onClick=${browseFiles} onDragOver=${event => event.preventDefault()} onDrop=${handleDrop}
-      style="width:100%;aspect-ratio:1;box-sizing:border-box;border:1px dashed var(--mute);white-space:nowrap;background:${art ? imageBackground(art) : FORM_STRIPE_PATTERN};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-weight:500;font-size:12px;letter-spacing:.06em">
+    <input type="file" accept="image/*" class="artwork-picker__input" ref=${fileInput} onChange=${handleFileChosen} />
+    <div class="mono click artwork-picker__dropzone" style=${imageStyle(art)}
+      onClick=${browseFiles} onDragOver=${event => event.preventDefault()} onDrop=${handleDrop}>
       ${!art && html`
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div class="artwork-picker__prompt">
           <span>DROP ALBUM ART</span>
           <span class="muted">JPG OR PNG · CROPPED TO SQUARE</span>
-          <span class="h-invert" style="margin-top:8px;border:1px solid var(--ink);padding:8px 14px">BROWSE FILES</span>
+          <span class="h-invert artwork-picker__browse">BROWSE FILES</span>
         </div>`}
     </div>
     ${art && html`
-      <div class="lbl" style="display:flex;gap:18px">
-        <span class="click" onClick=${browseFiles} style="border-bottom:1px solid var(--ink)">REPLACE</span>
+      <div class="lbl artwork-picker__actions">
+        <span class="click artwork-picker__replace" onClick=${browseFiles}>REPLACE</span>
         <span class="click red" onClick=${() => onChange(null)}>REMOVE</span>
       </div>`}`;
 }

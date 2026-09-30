@@ -1,0 +1,35 @@
+/* Reflection editor */
+.reflection-editor { padding: 4px 40px 60px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 64px; }
+.reflection-editor__main { display: flex; flex-direction: column; gap: 20px; padding-left: 80px; }
+.reflection-editor__back { display: flex; align-items: center; gap: 14px; }
+.reflection-editor__cover { width: 40px; height: 40px; }
+.reflection-editor__song { display: flex; flex-direction: column; gap: 2px; }
+.reflection-editor__date-row { display: flex; align-items: flex-end; gap: 18px; }
+.reflection-editor__date { font-size: 150px; line-height: .8; letter-spacing: -.05em; }
+.reflection-editor__date-meta { display: flex; flex-direction: column; gap: 4px; padding-bottom: 6px; }
+.reflection-editor__toolbar {
+  display: flex; gap: 18px; padding: 9px 0; color: var(--ink2);
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule);
+}
+.reflection-editor__insert { color: var(--ink2); }
+.reflection-editor__insert.is-active { color: var(--red); }
+.reflection-editor__spacer { flex: 1; }
+.reflection-editor__text {
+  min-height: 360px; max-width: 680px; resize: vertical; border: 0; background: transparent;
+  outline: none; font-size: 21px; line-height: 1.6;
+}
+.reflection-editor__actions { display: flex; gap: 12px; font-weight: 500; font-size: 12px; letter-spacing: .06em; }
+.reflection-editor__save { padding: 14px 28px; background: var(--ink); color: var(--bg); }
+.reflection-editor__cancel { padding: 14px 22px; border: 1px solid var(--ink); }
+.reflection-editor__delete { padding: 14px 0; }
+.reflection-editor__aside { display: flex; flex-direction: column; gap: 14px; border-left: 1px solid var(--rule); padding-left: 28px; }
+
+/* Lyric picker (quotes a line into the draft) */
+.lyric-picker { display: flex; flex-direction: column; gap: 4px; padding-bottom: 16px; }
+.lyric-picker__title { padding-bottom: 8px; }
+.lyric-picker__line { font-size: 14px; line-height: 1.4; padding: 5px 6px; border-top: 1px solid var(--rule2); }
+
+/* Earlier reflections */
+.earlier-reflection { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--rule); padding-top: 12px; }
+.earlier-reflection__meta { display: flex; justify-content: space-between; }
+.earlier-reflection__excerpt { font-size: 14px; line-height: 1.45; color: var(--ink3); text-wrap: pretty; }

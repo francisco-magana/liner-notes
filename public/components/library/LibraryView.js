@@ -1,5 +1,5 @@
 import { html } from '../../lib/html.js';
-import { COLORS, pillColors } from '../../lib/theme.js';
+import { classNames } from '../../lib/classNames.js';
 import { EmptyState } from '../EmptyState.js';
 import { AlbumGrid } from './AlbumGrid.js';
 import { ArtistTable } from './ArtistTable.js';
@@ -53,17 +53,17 @@ export function LibraryView({ songs, filters, onFiltersChange, onOpenSong, onAdd
   const title = LIBRARY_TABS.find(tab => tab.key === filters.tab).title;
 
   return html`
-    <div style="display:grid;grid-template-columns:380px minmax(0,1fr)">
+    <div class="library">
       <${RecordHero} song=${mostRecentlyActiveSong(songs)} onOpenSong=${onOpenSong} onAddSong=${onAddSong} />
-      <div style="padding:4px 40px 80px;display:flex;flex-direction:column;gap:18px;min-width:0">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
-          <div class="display" style="font-size:clamp(80px,8vw,140px);line-height:.82;min-width:0">${title}</div>
+      <div class="library__main">
+        <div class="library__header">
+          <div class="display library__title">${title}</div>
           <${TabList} activeTab=${filters.tab} counts=${tabCounts} onSelect=${tab => onFiltersChange({ tab })} />
         </div>
-        <div class="lbl" style="display:flex;justify-content:space-between;align-items:center;gap:20px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:8px 0">
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="lbl library__toolbar">
+          <div class="library__chips">
             ${chips.map(chip => html`
-              <span key=${chip.label} class="click h-under" onClick=${chip.onClick} style="padding:4px 8px;white-space:nowrap;${pillColors(chip.isActive)}">${chip.label}</span>`)}
+              <span key=${chip.label} class=${classNames('click h-under pill library__chip', chip.isActive && 'is-active')} onClick=${chip.onClick}>${chip.label}</span>`)}
           </div>
           <${SearchBox} value=${filters.query} onChange=${text => onFiltersChange({ query: text })} />
         </div>
@@ -79,12 +79,11 @@ export function LibraryView({ songs, filters, onFiltersChange, onOpenSong, onAdd
 
 function TabList({ activeTab, counts, onSelect }) {
   return html`
-    <div class="mono" style="display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:12px;letter-spacing:.06em;padding-bottom:4px;min-width:150px">
+    <div class="mono library-tabs">
       ${LIBRARY_TABS.map(tab => {
         const isActive = tab.key === activeTab;
         return html`
-          <div key=${tab.key} class="click h-ink" onClick=${() => onSelect(tab.key)}
-            style="display:flex;justify-content:space-between;gap:24px;color:${isActive ? COLORS.ink : COLORS.mute};border-bottom:1px solid ${isActive ? COLORS.ink : 'transparent'};padding-bottom:2px">
+          <div key=${tab.key} class=${classNames('click h-ink library-tabs__tab', isActive && 'is-active')} onClick=${() => onSelect(tab.key)}>
             <span>${(isActive ? '● ' : '○ ') + tab.label}</span><span>${counts[tab.key]}</span>
           </div>`;
       })}
@@ -93,10 +92,9 @@ function TabList({ activeTab, counts, onSelect }) {
 
 function SearchBox({ value, onChange }) {
   return html`
-    <div style="display:flex;align-items:center;gap:8px;flex:0 1 260px;min-width:160px;border-bottom:1px solid var(--line)">
+    <div class="library-search">
       <span class="muted">⌕</span>
-      <input class="lbl" value=${value} onInput=${event => onChange(event.target.value)} placeholder="SEARCH TITLE, ARTIST, LYRIC"
-        style="flex:1;min-width:0;border:0;background:transparent;outline:none;padding:4px 0" />
+      <input class="lbl library-search__input" value=${value} onInput=${event => onChange(event.target.value)} placeholder="SEARCH TITLE, ARTIST, LYRIC" />
       ${value && html`<span class="click muted" onClick=${() => onChange('')}>✕</span>`}
     </div>`;
 }

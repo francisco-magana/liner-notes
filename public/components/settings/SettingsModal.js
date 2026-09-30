@@ -1,10 +1,9 @@
 import { useState } from 'preact/hooks';
 import { api } from '../../api.js';
 import { html } from '../../lib/html.js';
-import { COLORS, pillColors } from '../../lib/theme.js';
+import { classNames } from '../../lib/classNames.js';
 
 const THEMES = [{ value: 'light', label: 'LIGHT' }, { value: 'dark', label: 'DARK' }];
-const FIELD_STYLE = 'border:0;border-bottom:1px solid var(--ink);background:transparent;outline:none;font-size:14px;padding:6px 0';
 
 /**
  * Theme (applied immediately) and Spotify credentials (applied on Save).
@@ -45,57 +44,57 @@ export function SettingsModal({ settings, isDark, onThemeChange, onSaveCredentia
   }
 
   return html`
-    <div onClick=${onClose} style="position:fixed;inset:0;background:rgba(10,10,9,.5);z-index:20;display:flex;align-items:center;justify-content:center">
-      <div onClick=${event => event.stopPropagation()}
-        style="width:560px;max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);overflow:auto;box-sizing:border-box;background:var(--bg);color:var(--ink);border:1px solid var(--ink);padding:32px;display:flex;flex-direction:column;gap:26px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div class="display" style="font-size:72px;line-height:.82">SETTINGS</div>
-          <span class="lbl click h-red" onClick=${onClose} style="padding:4px">✕ CLOSE</span>
+    <div class="settings-backdrop" onClick=${onClose}>
+      <div class="settings" onClick=${event => event.stopPropagation()}>
+        <div class="settings__header">
+          <div class="display settings__title">SETTINGS</div>
+          <span class="lbl click h-red settings__close" onClick=${onClose}>✕ CLOSE</span>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--ink);padding-top:14px">
+        <div class="settings__section">
           <span class="lbl red">APPEARANCE</span>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:17px">Theme</span>
-            <div style="display:flex;border:1px solid var(--ink)">
+          <div class="settings__row">
+            <span class="settings__row-label">Theme</span>
+            <div class="settings__theme-toggle">
               ${THEMES.map(theme => html`
-                <span key=${theme.value} class="lbl click" onClick=${() => onThemeChange(theme.value)}
-                  style="padding:8px 16px;${pillColors(isDark === (theme.value === 'dark'))}">${theme.label}</span>`)}
+                <span key=${theme.value} class=${classNames('lbl click pill settings__theme-option', isDark === (theme.value === 'dark') && 'is-active')}
+                  onClick=${() => onThemeChange(theme.value)}>${theme.label}</span>`)}
             </div>
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--ink);padding-top:14px">
-          <div class="lbl" style="display:flex;justify-content:space-between">
+        <div class="settings__section settings__section--spotify">
+          <div class="lbl settings__status-row">
             <span class="red">SPOTIFY</span>
-            <span style="color:${isStatusPositive ? COLORS.ink : COLORS.mute}">${status}</span>
+            <span class=${classNames('settings__status', isStatusPositive && 'is-positive')}>${status}</span>
           </div>
-          <span style="font-size:14px;line-height:1.5;color:var(--ink3);text-wrap:pretty">
+          <span class="settings__help">
             Optional. Create an app in the Spotify developer dashboard and paste its Client ID and Client secret. They're saved only in this app's local database and used to look up songs, albums and artists.
           </span>
-          <label style="display:flex;flex-direction:column;gap:6px">
+          <label class="settings__field">
             <span class="lbl muted">CLIENT ID</span>
-            <input class="mono f-red" value=${credentials.clientId} onInput=${event => updateCredentials({ clientId: event.target.value.trim() })}
-              placeholder="32-character ID" spellCheck=${false} style=${FIELD_STYLE} />
+            <input class="mono f-red settings__input" value=${credentials.clientId}
+              onInput=${event => updateCredentials({ clientId: event.target.value.trim() })}
+              placeholder="32-character ID" spellCheck=${false} />
           </label>
-          <label style="display:flex;flex-direction:column;gap:6px">
-            <div class="lbl muted" style="display:flex;justify-content:space-between">
+          <label class="settings__field">
+            <div class="lbl muted settings__field-header">
               <span>CLIENT SECRET</span>
-              <span class="click" onClick=${toggleSecretVisibility} style="color:var(--ink)">${isSecretVisible ? 'HIDE' : 'SHOW'}</span>
+              <span class="click settings__secret-toggle" onClick=${toggleSecretVisibility}>${isSecretVisible ? 'HIDE' : 'SHOW'}</span>
             </div>
-            <input class="mono f-red" type=${isSecretVisible ? 'text' : 'password'} value=${credentials.clientSecret}
+            <input class="mono f-red settings__input" type=${isSecretVisible ? 'text' : 'password'} value=${credentials.clientSecret}
               onInput=${event => updateCredentials({ clientSecret: event.target.value.trim() })}
-              placeholder="32-character secret" spellCheck=${false} style=${FIELD_STYLE} />
+              placeholder="32-character secret" spellCheck=${false} />
           </label>
-          <div class="lbl" style="display:flex;gap:16px;align-items:center">
-            <span class="click h-row" onClick=${testConnection} style="border:1px solid var(--ink);padding:8px 14px">TEST CONNECTION</span>
+          <div class="lbl settings__credential-actions">
+            <span class="click h-row settings__test" onClick=${testConnection}>TEST CONNECTION</span>
             <span class="click red" onClick=${() => updateCredentials({ clientId: '', clientSecret: '' })}>REMOVE</span>
           </div>
         </div>
 
-        <div class="mono" style="display:flex;justify-content:flex-end;gap:12px;border-top:1px solid var(--rule);padding-top:18px;font-weight:500;font-size:12px;letter-spacing:.06em">
-          <span class="click" onClick=${onClose} style="padding:12px 20px;border:1px solid var(--ink)">CANCEL</span>
-          <span class="click h-redbg" onClick=${() => onSaveCredentials(credentials)} style="padding:12px 24px;background:var(--ink);color:var(--bg)">SAVE</span>
+        <div class="mono settings__footer">
+          <span class="click settings__cancel" onClick=${onClose}>CANCEL</span>
+          <span class="click h-redbg settings__save" onClick=${() => onSaveCredentials(credentials)}>SAVE</span>
         </div>
       </div>
     </div>`;

@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { html } from '../../lib/html.js';
+import { classNames } from '../../lib/classNames.js';
 import { artistAndGenre, hasLyrics } from '../../lib/songs.js';
-import { COLORS } from '../../lib/theme.js';
 import { EmptyState } from '../EmptyState.js';
 import { AnnotatedLyrics } from './AnnotatedLyrics.js';
 import { LyricsEditor } from './LyricsEditor.js';
@@ -43,16 +43,15 @@ export function SongDetailView({
   }
 
   return html`
-    <div style="padding:4px 40px 80px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px">
+    <div class="song-detail">
       <${SongSidebar} song=${song} onBack=${onBack} onRate=${rating => onUpdate({ rating })} onEdit=${onEdit} onDelete=${onDelete} />
 
-      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
-        <div class="display" style="font-size:108px;line-height:.84;text-wrap:balance">${song.title.toUpperCase()}</div>
-        <div class="mono" style="font-weight:500;font-size:12px;letter-spacing:.06em">${artistAndGenre(song)}</div>
-        <div class="mono" style="display:flex;gap:28px;border-bottom:1px solid var(--ink);font-weight:500;font-size:12px;letter-spacing:.06em;margin-top:12px">
+      <div class="song-detail__main">
+        <div class="display song-detail__title">${song.title.toUpperCase()}</div>
+        <div class="mono song-detail__byline">${artistAndGenre(song)}</div>
+        <div class="mono song-detail__tabs">
           ${tabs.map(({ key, label }) => html`
-            <span key=${key} class="click" onClick=${() => setTab(key)}
-              style="padding:10px 0;margin-bottom:-1px;border-bottom:2px solid ${tab === key ? COLORS.ink : 'transparent'};color:${tab === key ? COLORS.ink : COLORS.mute}">${label}</span>`)}
+            <span key=${key} class=${classNames('click song-detail__tab', tab === key && 'is-active')} onClick=${() => setTab(key)}>${label}</span>`)}
         </div>
 
         ${tab === 'lyrics' && renderLyricsTab()}

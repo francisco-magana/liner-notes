@@ -1,0 +1,86 @@
+/* Library view */
+.library { display: grid; grid-template-columns: 380px minmax(0, 1fr); }
+.library__main { padding: 4px 40px 80px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.library__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.library__title { font-size: clamp(80px, 8vw, 140px); line-height: .82; min-width: 0; }
+.library__toolbar {
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 8px 0;
+}
+.library__chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.library__chip { padding: 4px 8px; white-space: nowrap; }
+
+.library-tabs {
+  display: flex; flex-direction: column; gap: 6px; min-width: 150px; padding-bottom: 4px;
+  font-weight: 500; font-size: 12px; letter-spacing: .06em;
+}
+.library-tabs__tab {
+  display: flex; justify-content: space-between; gap: 24px; padding-bottom: 2px;
+  color: var(--mute); border-bottom: 1px solid transparent;
+}
+.library-tabs__tab.is-active { color: var(--ink); border-bottom-color: var(--ink); }
+
+.library-search {
+  display: flex; align-items: center; gap: 8px; flex: 0 1 260px; min-width: 160px;
+  border-bottom: 1px solid var(--line);
+}
+.library-search__input { flex: 1; min-width: 0; border: 0; background: transparent; outline: none; padding: 4px 0; }
+
+/* Record hero: a half-visible vinyl record on the left */
+.record-hero { position: relative; }
+.record-hero__sticky { position: sticky; top: 0; height: calc(100vh - 80px); min-height: 640px; overflow: hidden; }
+.record-hero__rim {
+  position: absolute; left: -340px; top: calc(50% - 340px); width: 680px; height: 680px;
+  border-radius: 50%; border: 1px solid var(--red2);
+}
+.record-hero__vinyl {
+  position: absolute; left: -310px; top: calc(50% - 310px); width: 620px; height: 620px;
+  border-radius: 50%; background: repeating-radial-gradient(circle, #111 0 2px, #1c1c1c 2px 4px);
+}
+.record-hero__label { position: absolute; left: -90px; top: calc(50% - 90px); width: 180px; height: 180px; border-radius: 50%; }
+.record-hero__spindle {
+  position: absolute; left: -6px; top: calc(50% - 6px); width: 12px; height: 12px;
+  border-radius: 50%; background: var(--bg);
+}
+.record-hero__needle {
+  position: absolute; left: 334px; top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%;
+  background: var(--red2); box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--red2);
+}
+.record-hero__heading {
+  position: absolute; left: 112px; top: calc(50% - 18px); max-width: 190px;
+  display: flex; flex-direction: column; gap: 4px; color: #f7f6f2;
+}
+.record-hero__kicker { font-size: 10px; opacity: .7; letter-spacing: .06em; }
+.record-hero__title { font-size: 18px; letter-spacing: .02em; line-height: 1.1; }
+.record-hero__caption { position: absolute; left: 40px; bottom: 30px; font-size: 12px; }
+
+/* Song and artist tables */
+.song-table, .artist-table { display: flex; flex-direction: column; }
+.song-table__header, .song-table__row {
+  display: grid; grid-template-columns: 30px 44px minmax(0, 1fr) 150px 84px 50px 70px; gap: 14px;
+}
+.artist-table__header, .artist-table__row {
+  display: grid; grid-template-columns: 30px 44px minmax(0, 1fr) 60px 70px 180px 70px; gap: 14px;
+}
+.song-table__header, .artist-table__header { font-weight: 500; font-size: 10px; letter-spacing: .06em; padding-bottom: 8px; }
+.song-table__row, .artist-table__row { align-items: center; padding: 6px 0; border-top: 1px solid var(--rule); font-size: 12px; }
+.song-table__cover, .artist-table__cover { width: 44px; height: 44px; }
+.artist-table__cover { border-radius: 50%; }
+.song-table__name, .artist-table__name { display: flex; flex-direction: column; gap: 2px; }
+.song-table__name { min-width: 0; }
+.song-table__title, .artist-table__title { font-weight: 500; }
+.song-table__album, .artist-table__top-song { color: var(--ink2); }
+.song-table__stars { letter-spacing: 1px; }
+.song-table__date, .artist-table__date { text-align: right; }
+
+/* Album grid */
+.album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 24px 20px; }
+.album-grid__item { display: flex; flex-direction: column; gap: 8px; }
+.album-grid__cover {
+  aspect-ratio: 1; box-sizing: border-box; padding: 8px; font-size: 10px;
+  display: flex; align-items: flex-end; justify-content: flex-end;
+}
+.album-grid__count { background: var(--ink); color: var(--bg); padding: 2px 5px; }
+.album-grid__info { display: flex; flex-direction: column; gap: 2px; font-size: 11px; }
+.album-grid__title { font-weight: 500; }
+.album-grid__meta { display: flex; justify-content: space-between; }

@@ -1,9 +1,10 @@
 import { useState } from 'preact/hooks';
 import { html } from '../../lib/html.js';
+import { classNames } from '../../lib/classNames.js';
+import { coverStyle } from '../../lib/covers.js';
 import { focusAtEnd } from '../../lib/dom.js';
 import { WEEKDAY_NAMES, countWords, excerpt, formatDayMonth, formatShortDate, formatTime } from '../../lib/format.js';
 import { artistAndGenre, lyricTextLines, newestFirst } from '../../lib/songs.js';
-import { COLORS, coverBackground } from '../../lib/theme.js';
 
 /** Appends a lyric line to the draft as its own quoted paragraph. */
 function appendQuote(draft, line) {
@@ -25,50 +26,48 @@ export function ReflectionEditorView({ song, reflection, onSave, onDelete, onBac
   const otherReflections = [...song.reflections].sort(newestFirst).filter(other => other.id !== reflection?.id);
 
   return html`
-    <div style="padding:4px 40px 60px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:64px">
-      <div style="display:flex;flex-direction:column;gap:20px;padding-left:80px">
-        <div class="lbl click h-fade" onClick=${onBack} style="display:flex;align-items:center;gap:14px">
+    <div class="reflection-editor">
+      <div class="reflection-editor__main">
+        <div class="lbl click h-fade reflection-editor__back" onClick=${onBack}>
           <span class="muted">←</span>
-          <div style="width:40px;height:40px;background:${coverBackground(song)}"></div>
-          <div style="display:flex;flex-direction:column;gap:2px"><span>${song.title.toUpperCase()}</span><span class="muted">${artistAndGenre(song)}</span></div>
+          <div class="cover reflection-editor__cover" style=${coverStyle(song)}></div>
+          <div class="reflection-editor__song"><span>${song.title.toUpperCase()}</span><span class="muted">${artistAndGenre(song)}</span></div>
         </div>
-        <div style="display:flex;align-items:flex-end;gap:18px">
-          <div class="display" style="font-size:150px;line-height:.8;letter-spacing:-.05em">${formatDayMonth(shownDate)}</div>
-          <div class="lbl" style="display:flex;flex-direction:column;gap:4px;padding-bottom:6px">
+        <div class="reflection-editor__date-row">
+          <div class="display reflection-editor__date">${formatDayMonth(shownDate)}</div>
+          <div class="lbl reflection-editor__date-meta">
             <span>${WEEKDAY_NAMES[shownDate.getDay()]}</span>
             <span class="muted">${shownDate.getFullYear() + ' · ' + formatTime(shownDate)}</span>
           </div>
         </div>
-        <div class="lbl" style="display:flex;gap:18px;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);padding:9px 0;color:var(--ink2)">
-          <span class="click" onClick=${() => setIsLyricPickerOpen(!isLyricPickerOpen)} style="color:${isLyricPickerOpen ? COLORS.red : 'var(--ink2)'}">❝ INSERT LYRIC</span>
-          <span style="flex:1"></span>
+        <div class="lbl reflection-editor__toolbar">
+          <span class=${classNames('click reflection-editor__insert', isLyricPickerOpen && 'is-active')}
+            onClick=${() => setIsLyricPickerOpen(!isLyricPickerOpen)}>❝ INSERT LYRIC</span>
+          <span class="reflection-editor__spacer"></span>
           <span class="muted">${countWords(draft)} WORDS</span>
         </div>
-        <textarea ref=${focusAtEnd} value=${draft} onInput=${event => setDraft(event.target.value)}
-          placeholder="Where were you when you listened? What did it bring up?"
-          style="min-height:360px;max-width:680px;resize:vertical;border:0;background:transparent;outline:none;font-size:21px;line-height:1.6"></textarea>
-        <div class="mono" style="display:flex;gap:12px;font-weight:500;font-size:12px;letter-spacing:.06em">
-          <span class="click h-redbg" onClick=${() => onSave({ text: draft.trim(), date })} style="padding:14px 28px;background:var(--ink);color:var(--bg)">SAVE REFLECTION</span>
-          <span class="click" onClick=${onBack} style="padding:14px 22px;border:1px solid var(--ink)">CANCEL</span>
-          ${reflection && html`<span class="click red" onClick=${onDelete} style="padding:14px 0">DELETE</span>`}
+        <textarea class="reflection-editor__text" ref=${focusAtEnd} value=${draft} onInput=${event => setDraft(event.target.value)}
+          placeholder="Where were you when you listened? What did it bring up?"></textarea>
+        <div class="mono reflection-editor__actions">
+          <span class="click h-redbg reflection-editor__save" onClick=${() => onSave({ text: draft.trim(), date })}>SAVE REFLECTION</span>
+          <span class="click reflection-editor__cancel" onClick=${onBack}>CANCEL</span>
+          ${reflection && html`<span class="click red reflection-editor__delete" onClick=${onDelete}>DELETE</span>`}
         </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:14px;border-left:1px solid var(--rule);padding-left:28px">
+      <div class="reflection-editor__aside">
         ${isLyricPickerOpen && html`
-          <div style="display:flex;flex-direction:column;gap:4px;padding-bottom:16px">
-            <div class="lbl red" style="padding-bottom:8px">CLICK A LINE TO QUOTE IT</div>
+          <div class="lyric-picker">
+            <div class="lbl red lyric-picker__title">CLICK A LINE TO QUOTE IT</div>
             ${lyricLines.map((line, index) => html`
-              <span key=${index} class="click h-row" onClick=${() => setDraft(current => appendQuote(current, line))}
-                style="font-size:14px;line-height:1.4;padding:5px 6px;border-top:1px solid var(--rule2)">${line}</span>`)}
+              <span key=${index} class="click h-row lyric-picker__line" onClick=${() => setDraft(current => appendQuote(current, line))}>${line}</span>`)}
             ${!lyricLines.length && html`<span class="lbl muted">NO LYRICS ADDED FOR THIS SONG.</span>`}
           </div>`}
         <div class="lbl red">EARLIER REFLECTIONS</div>
         ${otherReflections.map(other => html`
-          <div key=${other.id} class="click h-fade" onClick=${() => onOpenReflection(other.id)}
-            style="display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--rule);padding-top:12px">
-            <div class="lbl" style="display:flex;justify-content:space-between"><span>${formatShortDate(other.date)}</span><span class="muted">${countWords(other.text)} W</span></div>
-            <span style="font-size:14px;line-height:1.45;color:var(--ink3);text-wrap:pretty">${excerpt(other.text, 120)}</span>
+          <div key=${other.id} class="click h-fade earlier-reflection" onClick=${() => onOpenReflection(other.id)}>
+            <div class="lbl earlier-reflection__meta"><span>${formatShortDate(other.date)}</span><span class="muted">${countWords(other.text)} W</span></div>
+            <span class="earlier-reflection__excerpt">${excerpt(other.text, 120)}</span>
           </div>`)}
         ${!otherReflections.length && html`<span class="lbl muted">THIS IS YOUR FIRST ONE.</span>`}
       </div>

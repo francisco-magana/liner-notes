@@ -1,0 +1,38 @@
+/* Settings modal */
+.settings-backdrop {
+  position: fixed; inset: 0; z-index: 20; background: rgba(10, 10, 9, .5);
+  display: flex; align-items: center; justify-content: center;
+}
+.settings {
+  width: 560px; max-width: calc(100vw - 48px); max-height: calc(100vh - 48px); overflow: auto; box-sizing: border-box;
+  background: var(--bg); color: var(--ink); border: 1px solid var(--ink); padding: 32px;
+  display: flex; flex-direction: column; gap: 26px;
+}
+.settings__header { display: flex; justify-content: space-between; align-items: flex-start; }
+.settings__title { font-size: 72px; line-height: .82; }
+.settings__close { padding: 4px; }
+
+.settings__section { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--ink); padding-top: 14px; }
+.settings__section--spotify { gap: 14px; }
+.settings__row { display: flex; justify-content: space-between; align-items: center; }
+.settings__row-label { font-size: 17px; }
+.settings__theme-toggle { display: flex; border: 1px solid var(--ink); }
+.settings__theme-option { padding: 8px 16px; }
+
+.settings__status-row { display: flex; justify-content: space-between; }
+.settings__status { color: var(--mute); }
+.settings__status.is-positive { color: var(--ink); }
+.settings__help { font-size: 14px; line-height: 1.5; color: var(--ink3); text-wrap: pretty; }
+.settings__field { display: flex; flex-direction: column; gap: 6px; }
+.settings__field-header { display: flex; justify-content: space-between; }
+.settings__secret-toggle { color: var(--ink); }
+.settings__input { border: 0; border-bottom: 1px solid var(--ink); background: transparent; outline: none; font-size: 14px; padding: 6px 0; }
+.settings__credential-actions { display: flex; gap: 16px; align-items: center; }
+.settings__test { border: 1px solid var(--ink); padding: 8px 14px; }
+
+.settings__footer {
+  display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--rule); padding-top: 18px;
+  font-weight: 500; font-size: 12px; letter-spacing: .06em;
+}
+.settings__cancel { padding: 12px 20px; border: 1px solid var(--ink); }
+.settings__save { padding: 12px 24px; background: var(--ink); color: var(--bg); }

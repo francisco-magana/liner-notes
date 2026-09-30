@@ -1,13 +1,12 @@
 import { useState } from 'preact/hooks';
 import { html } from '../../lib/html.js';
+import { classNames } from '../../lib/classNames.js';
 import { BASE_MOODS, emptySongForm, songToForm } from '../../lib/songs.js';
-import { COLORS } from '../../lib/theme.js';
 import { RatingStars } from '../RatingStars.js';
 import { ArtworkPicker } from './ArtworkPicker.js';
 import { MoodPicker } from './MoodPicker.js';
 import { SpotifyPanel } from './SpotifyPanel.js';
 
-const FIELD_STYLE = 'font-size:20px;padding:4px 0 8px';
 const TRIMMED_FIELDS = ['title', 'artist', 'album', 'genre', 'year'];
 
 /**
@@ -52,14 +51,14 @@ export function SongFormView({ song, knownMoods, isSpotifyConfigured, onSave, on
   }
 
   return html`
-    <div style="padding:4px 40px 60px;display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:48px">
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="display" style="font-size:clamp(80px,8vw,112px);line-height:.84">${isEditing ? 'EDIT' : 'NEW'}<br/>${isEditing ? 'SONG' : 'ENTRY'}</div>
+    <div class="song-form">
+      <div class="song-form__aside">
+        <div class="display song-form__heading">${isEditing ? 'EDIT' : 'NEW'}<br/>${isEditing ? 'SONG' : 'ENTRY'}</div>
         <${ArtworkPicker} art=${form.art} onChange=${art => updateForm({ art })} onError=${onNotify} />
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:22px;padding-top:6px;max-width:760px">
-        <div class="lbl muted" style="display:flex;flex-wrap:wrap;gap:4px 16px;white-space:nowrap;justify-content:space-between">
+      <div class="song-form__fields">
+        <div class="lbl muted song-form__notice">
           <span>EVERYTHING STAYS ON THIS DEVICE</span><span>* REQUIRED</span>
         </div>
 
@@ -71,47 +70,37 @@ export function SongFormView({ song, knownMoods, isSpotifyConfigured, onSave, on
           onImportAlbum=${onImportAlbum}
           onOpenSettings=${onOpenSettings} />
 
-        <label style="display:flex;flex-direction:column;gap:6px">
-          <${FieldLabel} text=${'TITLE * ' + (errors.title || '')} color=${COLORS.red} />
-          <input class="field f-red" value=${form.title} onInput=${bindField('title')} placeholder="Song title"
-            style="border-bottom-color:${errors.title ? COLORS.red : COLORS.ink};font-size:40px;font-weight:500;font-stretch:72%;letter-spacing:-.02em;padding:2px 0 8px;text-transform:uppercase" />
-        </label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
-          <label style="display:flex;flex-direction:column;gap:6px">
-            <${FieldLabel} text=${'ARTIST * ' + (errors.artist || '')} color=${errors.artist ? COLORS.red : COLORS.mute} />
-            <input class="field f-red" value=${form.artist} onInput=${bindField('artist')} placeholder="Who made it"
-              style="border-bottom-color:${errors.artist ? COLORS.red : COLORS.ink};${FIELD_STYLE}" />
-          </label>
+        <${TextField} label=${'TITLE * ' + (errors.title || '')} isLabelAlert isInvalid=${Boolean(errors.title)} variant="title"
+          value=${form.title} onInput=${bindField('title')} placeholder="Song title" />
+        <div class="song-form__row song-form__row--halves">
+          <${TextField} label=${'ARTIST * ' + (errors.artist || '')} isLabelAlert=${Boolean(errors.artist)} isInvalid=${Boolean(errors.artist)}
+            value=${form.artist} onInput=${bindField('artist')} placeholder="Who made it" />
           <${TextField} label="ALBUM" value=${form.album} onInput=${bindField('album')} placeholder="Album or single" />
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px">
+        <div class="song-form__row song-form__row--thirds">
           <${TextField} label="YEAR" value=${form.year} onInput=${bindField('year')} placeholder="2026" inputMode="numeric" />
           <${TextField} label="GENRE" value=${form.genre} onInput=${bindField('genre')} placeholder="Dream pop" />
-          <label style="display:flex;flex-direction:column;gap:6px">
-            <${FieldLabel} text="FIRST HEARD" />
-            <input class="field f-red" type="date" value=${form.firstHeard} onInput=${bindField('firstHeard')} style="font-size:18px;padding:4px 0 8px" />
-          </label>
+          <${TextField} label="FIRST HEARD" variant="date" type="date" value=${form.firstHeard} onInput=${bindField('firstHeard')} />
         </div>
-        <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px">
-          <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="song-form__row song-form__row--rating">
+          <div class="song-form__rating">
             <${FieldLabel} text="RATING" />
-            <${RatingStars} rating=${form.rating} onChange=${rating => updateForm({ rating })} size=${30} gap=${4} hoverClass="h-scale" />
+            <${RatingStars} rating=${form.rating} onChange=${rating => updateForm({ rating })} size="large" />
           </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="song-form__moods">
             <${FieldLabel} text="MOOD" />
             <${MoodPicker} options=${moodOptions} selected=${form.moods} onChange=${moods => updateForm({ moods })} />
           </div>
         </div>
-        <label style="display:flex;flex-direction:column;gap:8px">
-          <div class="lbl muted" style="display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:space-between">
+        <label class="song-form__lyrics-field">
+          <div class="lbl muted song-form__lyrics-hint">
             <span>LYRICS — OPTIONAL</span><span>ONE LINE PER LYRIC LINE · BLANK LINE = NEW SECTION</span>
           </div>
-          <textarea class="mono f-box" value=${form.lyrics} onInput=${bindField('lyrics')} placeholder="Paste or type lyrics…"
-            style="height:120px;resize:vertical;border:1px solid var(--line);background:var(--field);padding:12px 14px;outline:none;font-size:13px;line-height:1.6"></textarea>
+          <textarea class="mono f-box song-form__lyrics" value=${form.lyrics} onInput=${bindField('lyrics')} placeholder="Paste or type lyrics…"></textarea>
         </label>
-        <div class="mono" style="display:flex;justify-content:flex-end;gap:12px;font-weight:500;font-size:12px;letter-spacing:.06em">
-          <span class="click h-row" onClick=${onCancel} style="padding:14px 22px;border:1px solid var(--ink)">CANCEL</span>
-          <span class="click h-redbg" onClick=${save} style="padding:14px 28px;background:var(--ink);color:var(--bg);opacity:${isSaving ? 0.6 : 1}">
+        <div class="mono song-form__actions">
+          <span class="click h-row song-form__cancel" onClick=${onCancel}>CANCEL</span>
+          <span class=${classNames('click h-redbg song-form__save', isSaving && 'is-saving')} onClick=${save}>
             ${isSaving ? 'SAVING…' : isEditing ? 'SAVE CHANGES →' : 'SAVE ENTRY →'}
           </span>
         </div>
@@ -119,14 +108,16 @@ export function SongFormView({ song, knownMoods, isSpotifyConfigured, onSave, on
     </div>`;
 }
 
-function FieldLabel({ text, color = COLORS.mute }) {
-  return html`<span class="lbl" style="color:${color}">${text}</span>`;
+function FieldLabel({ text, isAlert = false }) {
+  return html`<span class=${classNames('lbl song-form__label', isAlert && 'is-alert')}>${text}</span>`;
 }
 
-function TextField({ label, ...inputProps }) {
+/** Labelled underline input. `variant` is 'title' or 'date' for the larger and date fields. */
+function TextField({ label, isLabelAlert = false, isInvalid = false, variant, ...inputProps }) {
+  const inputClass = classNames('field f-red song-form__input', variant && `song-form__input--${variant}`, isInvalid && 'is-invalid');
   return html`
-    <label style="display:flex;flex-direction:column;gap:6px">
-      <${FieldLabel} text=${label} />
-      <input class="field f-red" style=${FIELD_STYLE} ...${inputProps} />
+    <label class="song-form__field">
+      <${FieldLabel} text=${label} isAlert=${isLabelAlert} />
+      <input class=${inputClass} ...${inputProps} />
     </label>`;
 }

@@ -84,9 +84,10 @@ public/
   index.html  Page shell and import map
   app.js      Entry point: mounts <App>
   api.js      Fetch wrapper for the API
-  styles.css  Theme tokens and shared styles
+  styles.css  Theme tokens and shared utility classes
   components/
     App.js        Top-level state, navigation and actions
+    common.css    Styles for the shared components (nav, toast, stars…)
     library/      Library view: song, artist and album lists
     song-form/    Add and edit a song, plus the Spotify search panel
     song-detail/  Song page: lyrics with notes, and reflections
@@ -98,5 +99,6 @@ public/
 ```
 
 - **Frontend:** [Preact](https://preactjs.com) with [htm](https://github.com/developit/htm) tagged templates, loaded as native ES modules from `node_modules`. There is no bundler or build step.
+- **Styles:** each component folder has its own stylesheet, such as `library/library.css`, using `block__element--modifier` class names. States like `is-active` are modifier classes. Only runtime values (album art images and bar-chart widths) are set inline. New stylesheets must be linked in `index.html` after `styles.css`.
 - **Backend:** [Express 5](https://expressjs.com) plus the built-in `node:sqlite`.
 - **Tables:** `songs`, `reflections` (cascade-deleted with their song), `art` (image BLOBs, shared by songs from the same album, and pruned once nothing uses them) and `settings`.
