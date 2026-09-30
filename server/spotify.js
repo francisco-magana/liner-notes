@@ -1,87 +1,99 @@
-import { HttpError, badRequest } from './errors.js';
+// A small Spotify Web API client using the client-credentials flow. All Spotify
+// requests go through the server, so credentials never reach the browser.
+import { badGateway, badRequest } from './errors.js';
 
-const TYPES = new Set(['track', 'album', 'artist']);
+const TOKEN_URL = 'https://accounts.spotify.com/api/token';
+const API_URL = 'https://api.spotify.com/v1';
+const REQUEST_TIMEOUT_MS = 10_000;
+const SEARCH_TYPES = new Set(['track', 'album', 'artist']);
+const SEARCH_LIMIT = 8;
+const MAX_ALBUM_TRACKS = 500;
+/** Renew the token a minute before Spotify says it expires. */
+const TOKEN_EXPIRY_MARGIN_MS = 60_000;
 
-/** Minimal Spotify Web API client using the client-credentials flow. */
-export function createSpotify(getCreds) {
-  let cached = null; // { key, token, exp }
+/** `getCredentials()` returns the saved `{ clientId, clientSecret }`. */
+export function createSpotifyClient(getCredentials) {
+  let cachedToken = null; // { credentials, accessToken, expiresAt }
 
-  async function token(clientId, clientSecret) {
+  async function request(url, options = {}) {
+    try {
+      return await fetch(url, { ...options, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+    } catch {
+      throw badGateway("COULDN'T REACH SPOTIFY");
+    }
+  }
+
+  async function getAccessToken(clientId, clientSecret) {
     if (!clientId || !clientSecret) throw badRequest('ADD SPOTIFY CREDENTIALS IN SETTINGS');
-    const key = clientId + ':' + clientSecret;
-    if (cached && cached.key === key && cached.exp > Date.now()) return cached.token;
-    let r;
-    try {
-      r = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: 'Basic ' + Buffer.from(key).toString('base64')
-        },
-        body: 'grant_type=client_credentials',
-        signal: AbortSignal.timeout(10_000)
-      });
-    } catch {
-      throw new HttpError(502, "COULDN'T REACH SPOTIFY");
+    const credentials = `${clientId}:${clientSecret}`;
+    if (cachedToken && cachedToken.credentials === credentials && cachedToken.expiresAt > Date.now()) {
+      return cachedToken.accessToken;
     }
-    if (r.status === 400 || r.status === 401) throw badRequest('INVALID CLIENT ID OR SECRET');
-    if (!r.ok) throw new HttpError(502, 'SPOTIFY ERROR ' + r.status);
-    const j = await r.json();
-    cached = { key, token: j.access_token, exp: Date.now() + (j.expires_in - 60) * 1000 };
-    return j.access_token;
+
+    const response = await request(TOKEN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: 'Basic ' + Buffer.from(credentials).toString('base64')
+      },
+      body: 'grant_type=client_credentials'
+    });
+    if (response.status === 400 || response.status === 401) throw badRequest('INVALID CLIENT ID OR SECRET');
+    if (!response.ok) throw badGateway('SPOTIFY ERROR ' + response.status);
+
+    const { access_token: accessToken, expires_in: expiresInSeconds } = await response.json();
+    cachedToken = { credentials, accessToken, expiresAt: Date.now() + expiresInSeconds * 1000 - TOKEN_EXPIRY_MARGIN_MS };
+    return accessToken;
   }
 
-  async function call(path) {
-    const { clientId, clientSecret } = getCreds();
-    const t = await token(clientId, clientSecret);
-    let r;
-    try {
-      r = await fetch('https://api.spotify.com/v1' + path, {
-        headers: { Authorization: 'Bearer ' + t },
-        signal: AbortSignal.timeout(10_000)
-      });
-    } catch {
-      throw new HttpError(502, "COULDN'T REACH SPOTIFY");
+  /** GET a Web API URL with the saved credentials and return the parsed JSON. */
+  async function apiGet(url) {
+    const { clientId, clientSecret } = getCredentials();
+    const accessToken = await getAccessToken(clientId, clientSecret);
+    const response = await request(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+    if (response.status === 401) {
+      cachedToken = null;
+      throw badGateway('SESSION EXPIRED — TRY AGAIN');
     }
-    if (r.status === 401) {
-      cached = null;
-      throw new HttpError(502, 'SESSION EXPIRED — TRY AGAIN');
-    }
-    if (!r.ok) throw new HttpError(502, 'SPOTIFY ERROR ' + r.status);
-    return r.json();
+    if (!response.ok) throw badGateway('SPOTIFY ERROR ' + response.status);
+    return response.json();
   }
 
-  return {
-    async test(clientId, clientSecret) {
-      cached = null;
-      await token(clientId, clientSecret);
-    },
+  /** Checks credentials before they are saved. Throws when Spotify rejects them. */
+  async function testCredentials(clientId, clientSecret) {
+    cachedToken = null;
+    await getAccessToken(clientId, clientSecret);
+  }
 
-    async search(type, query) {
-      if (!TYPES.has(type)) throw badRequest('INVALID SEARCH TYPE');
-      const j = await call(`/search?type=${type}&limit=8&q=${encodeURIComponent(query)}`);
-      return ((j[type + 's'] || {}).items || []).filter(Boolean);
-    },
+  /** Searches tracks, albums or artists. Returns Spotify's result objects. */
+  async function search(type, query) {
+    if (!SEARCH_TYPES.has(type)) throw badRequest('INVALID SEARCH TYPE');
+    const results = await apiGet(`${API_URL}/search?type=${type}&limit=${SEARCH_LIMIT}&q=${encodeURIComponent(query)}`);
+    return (results[type + 's']?.items || []).filter(Boolean);
+  }
 
-    /** Album metadata plus every track (follows pagination). */
-    async album(id) {
-      if (!/^[A-Za-z0-9]+$/.test(id)) throw badRequest('INVALID ALBUM');
-      const album = await call('/albums/' + id);
-      const tracks = [...(album.tracks?.items || [])];
-      let next = album.tracks?.next;
-      while (next && tracks.length < 500) {
-        const page = await call(next.replace('https://api.spotify.com/v1', ''));
-        tracks.push(...(page.items || []));
-        next = page.next;
-      }
-      return { album, tracks };
+  /** An album's details plus all its tracks, following Spotify's pagination. */
+  async function getAlbumWithTracks(albumId) {
+    if (!/^[A-Za-z0-9]+$/.test(albumId)) throw badRequest('INVALID ALBUM');
+    const album = await apiGet(`${API_URL}/albums/${albumId}`);
+    const tracks = [...(album.tracks?.items || [])];
+    let nextPageUrl = album.tracks?.next;
+    while (nextPageUrl && tracks.length < MAX_ALBUM_TRACKS) {
+      const page = await apiGet(nextPageUrl);
+      tracks.push(...(page.items || []));
+      nextPageUrl = page.next;
     }
-  };
+    return { album, tracks };
+  }
+
+  return { testCredentials, search, getAlbumWithTracks };
 }
 
-/** Largest image (or the smallest one at least 64px wide when `small`). */
-export function pickImage(images, small = false) {
+/** URL of the largest image in a Spotify image list, or null. */
+export function largestImageUrl(images) {
   if (!images || !images.length) return null;
-  const s = [...images].sort((a, b) => (a.width || 0) - (b.width || 0));
-  return small ? (s.find(i => (i.width || 0) >= 64) || s[s.length - 1]).url : s[s.length - 1].url;
+  return images.reduce((largest, image) => ((image.width || 0) >= (largest.width || 0) ? image : largest)).url;
 }
+
+/** "Artist One, Artist Two" */
+export const joinArtistNames = artists => (artists || []).map(artist => artist.name).join(', ');

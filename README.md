@@ -72,14 +72,17 @@ A single Node.js process serves both the API and the web app.
 
 ```
 server/
-  index.js    Express app: API, static files, startup
-  routes.js   REST endpoints under /api
-  store.js    SQLite queries and validation
-  db.js       Schema and connection (node:sqlite)
-  art.js      Album art: uploads and downloads, stored as BLOBs
-  spotify.js  Spotify client-credentials client
-  seed.js     Demo library
-  reset.js    `npm run reset`
+  index.js      Startup: open the database, start listening
+  app.js        Express app: API, frontend files, error handling
+  config.js     Environment variables and paths
+  database.js   Schema, connection (node:sqlite) and transactions
+  errors.js     HttpError: errors shown to the user
+  artInput.js   Album art sent by the client: data URLs, downloads, stored-art URLs
+  spotify.js    Spotify client-credentials client
+  seed.js       Demo library
+  reset.js      `npm run reset`
+  routes/       REST endpoints under /api (songs and reflections, art, settings, spotify)
+  store/        Database access, one file per table, plus input validation
 public/
   index.html  Page shell and import map
   app.js      Entry point: mounts <App>

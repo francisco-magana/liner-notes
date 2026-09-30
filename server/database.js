@@ -1,6 +1,7 @@
-import { DatabaseSync } from 'node:sqlite';
+import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS art (
@@ -39,23 +40,31 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 `;
 
-export function openDb(file) {
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  const fresh = !fs.existsSync(file);
-  const db = new DatabaseSync(file);
+/**
+ * Opens the SQLite database, creating the file and tables when needed.
+ * `isNew` tells whether the file was just created.
+ */
+export function openDatabase(filePath) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  const isNew = !fs.existsSync(filePath);
+  const db = new DatabaseSync(filePath);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   db.exec(SCHEMA);
-  return { db, fresh };
+  return { db, isNew };
 }
 
-export function transaction(db, fn) {
+/** Runs `work` in a transaction: commits its changes, or rolls them all back if it throws. */
+export function runInTransaction(db, work) {
   db.exec('BEGIN');
   try {
-    const out = fn();
+    const result = work();
     db.exec('COMMIT');
-    return out;
-  } catch (e) {
+    return result;
+  } catch (error) {
     db.exec('ROLLBACK');
-    throw e;
+    throw error;
   }
 }
+
+/** A short random id for new rows. */
+export const newId = () => randomUUID().replace(/-/g, '').slice(0, 12);

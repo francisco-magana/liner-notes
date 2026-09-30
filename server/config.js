@@ -1,0 +1,13 @@
+// Settings read from environment variables, with defaults for local use.
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/** The project folder (one level above server/). */
+export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+export const PORT = Number(process.env.PORT) || 4321;
+export const HOST = process.env.HOST || '127.0.0.1';
+export const DB_PATH = path.resolve(ROOT_DIR, process.env.DB_PATH || 'data/linernotes.db');
+
+/** Whether a brand-new database gets the demo library. */
+export const SEED_DEMO_SONGS = process.env.SEED !== '0';
