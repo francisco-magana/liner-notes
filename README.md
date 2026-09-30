@@ -82,9 +82,19 @@ server/
   reset.js    `npm run reset`
 public/
   index.html  Page shell and import map
-  app.js      The UI (Preact + htm, no build step)
+  app.js      Entry point: mounts <App>
   api.js      Fetch wrapper for the API
   styles.css  Theme tokens and shared styles
+  components/
+    App.js        Top-level state, navigation and actions
+    library/      Library view: song, artist and album lists
+    song-form/    Add and edit a song, plus the Spotify search panel
+    song-detail/  Song page: lyrics with notes, and reflections
+    reflection/   Reflection editor
+    diary/        Monthly diary and stats
+    settings/     Settings modal
+  hooks/      Shared state: songs, settings, toast, system theme
+  lib/        Pure helpers: formatting, songs, Spotify results, theme values
 ```
 
 - **Frontend:** [Preact](https://preactjs.com) with [htm](https://github.com/developit/htm) tagged templates, loaded as native ES modules from `node_modules`. There is no bundler or build step.

@@ -1,7 +1,8 @@
-async function req(method, url, body) {
-  let r;
+/** Sends a JSON request to the local server and returns the parsed response (null for 204). */
+async function request(method, url, body) {
+  let response;
   try {
-    r = await fetch(url, {
+    response = await fetch(url, {
       method,
       headers: body !== undefined ? { 'Content-Type': 'application/json' } : undefined,
       body: body !== undefined ? JSON.stringify(body) : undefined
@@ -9,25 +10,25 @@ async function req(method, url, body) {
   } catch {
     throw new Error("CAN'T REACH THE LINER NOTES SERVER");
   }
-  if (r.status === 204) return null;
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || 'REQUEST FAILED ' + r.status);
-  return j;
+  if (response.status === 204) return null;
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || 'REQUEST FAILED ' + response.status);
+  return payload;
 }
 
 export const api = {
-  bootstrap: () => req('GET', '/api/bootstrap'),
-  saveSettings: patch => req('PUT', '/api/settings', patch),
+  bootstrap: () => request('GET', '/api/bootstrap'),
+  saveSettings: changes => request('PUT', '/api/settings', changes),
 
-  createSong: song => req('POST', '/api/songs', song),
-  updateSong: (id, patch) => req('PATCH', `/api/songs/${id}`, patch),
-  deleteSong: id => req('DELETE', `/api/songs/${id}`),
+  createSong: song => request('POST', '/api/songs', song),
+  updateSong: (songId, changes) => request('PATCH', `/api/songs/${songId}`, changes),
+  deleteSong: songId => request('DELETE', `/api/songs/${songId}`),
 
-  addReflection: (songId, r) => req('POST', `/api/songs/${songId}/reflections`, r),
-  updateReflection: (songId, id, r) => req('PATCH', `/api/songs/${songId}/reflections/${id}`, r),
-  deleteReflection: (songId, id) => req('DELETE', `/api/songs/${songId}/reflections/${id}`),
+  addReflection: (songId, reflection) => request('POST', `/api/songs/${songId}/reflections`, reflection),
+  updateReflection: (songId, reflectionId, changes) => request('PATCH', `/api/songs/${songId}/reflections/${reflectionId}`, changes),
+  deleteReflection: (songId, reflectionId) => request('DELETE', `/api/songs/${songId}/reflections/${reflectionId}`),
 
-  testSpotify: creds => req('POST', '/api/spotify/test', creds),
-  spotifySearch: (type, q) => req('GET', `/api/spotify/search?type=${type}&q=${encodeURIComponent(q)}`),
-  importAlbum: body => req('POST', '/api/spotify/import-album', body)
+  testSpotify: credentials => request('POST', '/api/spotify/test', credentials),
+  spotifySearch: (type, query) => request('GET', `/api/spotify/search?type=${type}&q=${encodeURIComponent(query)}`),
+  importAlbum: body => request('POST', '/api/spotify/import-album', body)
 };

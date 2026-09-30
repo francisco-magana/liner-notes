@@ -22,9 +22,10 @@ app.disable('x-powered-by');
 app.use(express.json({ limit: '20mb' }));
 app.use('/api', apiRouter(store, spotify));
 
-// Frontend: static files plus the two ES-module libraries it imports (no build step).
+// Frontend: static files plus the ES-module libraries it imports (no build step).
 const vendor = {
   '/vendor/preact.mjs': 'node_modules/preact/dist/preact.mjs',
+  '/vendor/preact-hooks.mjs': 'node_modules/preact/hooks/dist/hooks.mjs',
   '/vendor/htm.mjs': 'node_modules/htm/dist/htm.mjs'
 };
 for (const [url, file] of Object.entries(vendor)) {
