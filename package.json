@@ -1,0 +1,20 @@
+{
+  "name": "liner-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A personal song journal: library, line-by-line lyric notes, reflections and a listening diary.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
+    "reset": "node --disable-warning=ExperimentalWarning server/reset.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "htm": "^3.1.1",
+    "preact": "^11.0.0"
+  }
+}

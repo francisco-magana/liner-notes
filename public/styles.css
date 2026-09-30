@@ -1,0 +1,54 @@
+:root {
+  --bg: #f7f6f2; --ink: #111; --mute: #8c8a84; --rule: #e4e2dc; --rule2: #eceae4; --hover: #efede7;
+  --track: #ebe9e3; --line: #cfccc4; --ink2: #56544f; --ink3: #3b3a37; --field: #fbfaf7;
+  --s1: #dcd9d1; --s2: #e9e7e1; --f1: #ecebe6; --f2: #f3f2ee;
+  --red: oklch(0.52 0.17 28); --red2: oklch(0.58 0.17 28); --redInk: oklch(0.45 0.16 28); --ph: #b4b1a9;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #141413; --ink: #eeede8; --mute: #8f8d86; --rule: #2c2b28; --rule2: #262523; --hover: #1f1e1c;
+  --track: #252422; --line: #4a4843; --ink2: #b4b1a9; --ink3: #c9c6be; --field: #1b1a19;
+  --s1: #2a2926; --s2: #33312e; --f1: #232220; --f2: #2a2927;
+  --red: oklch(0.68 0.15 28); --red2: oklch(0.62 0.15 28); --redInk: oklch(0.76 0.12 28); --ph: #5a5853;
+  color-scheme: dark;
+}
+
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Archivo', sans-serif; -webkit-font-smoothing: antialiased; }
+textarea, input { font-family: inherit; color: inherit; }
+::placeholder { color: var(--ph); }
+
+.app { min-height: 100vh; min-width: 1100px; background: var(--bg); color: var(--ink); }
+
+/* Type */
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.lbl { font: 500 11px 'IBM Plex Mono', monospace; letter-spacing: .06em; }
+.display { font-weight: 500; font-stretch: 72%; letter-spacing: -.045em; }
+.muted { color: var(--mute); }
+.red { color: var(--red); }
+.click { cursor: pointer; }
+.ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Hover / focus states (inline styles set the resting look, so these win with !important) */
+.h-ink:hover { color: var(--ink) !important; }
+.h-red:hover { color: var(--red) !important; }
+.h-fade:hover { opacity: .7; }
+.h-fade75:hover { opacity: .75; }
+.h-under:hover { text-decoration: underline; }
+.h-row:hover { background: var(--hover) !important; }
+.h-invert:hover { background: var(--ink) !important; color: var(--bg) !important; }
+.h-redbg:hover { background: var(--red) !important; }
+.h-scale { display: inline-block; transition: transform .1s; }
+.h-scale:hover { transform: scale(1.12); }
+.h-scale2 { display: inline-block; transition: transform .1s; }
+.h-scale2:hover { transform: scale(1.2); }
+.h-slide { transition: padding-left .15s; }
+.h-slide:hover { padding-left: 6px; }
+.h-lyric:hover { text-decoration: underline; text-decoration-color: var(--line); }
+.f-red:focus { border-bottom-color: var(--red) !important; }
+.f-ink:focus { border-bottom-color: var(--ink) !important; }
+.f-box:focus { border-color: var(--ink) !important; }
+
+/* Form fields */
+.field { border: 0; border-bottom: 1px solid var(--ink); background: transparent; outline: none; }
+
+.loading { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
