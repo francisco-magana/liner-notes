@@ -1,0 +1,58 @@
+<!-- Liner Notes app icon: a record sliding out of its sleeve, on a red macOS-style tile.
+     Source of build/icon.png: edit this file, then run `npm run icon`.
+     Colors come from public/styles.css: the bg, ink, mute, red and red2 tokens. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tile-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cb473d"/>
+      <stop offset="1" stop-color="#b6322b"/>
+    </linearGradient>
+    <linearGradient id="vinyl-sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.06"/>
+    </linearGradient>
+    <filter id="tile-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+    <filter id="sleeve-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="6" dy="-6" stdDeviation="12" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <clipPath id="tile-shape">
+      <rect x="100" y="100" width="824" height="824" rx="185"/>
+    </clipPath>
+  </defs>
+
+  <!-- Tile: the standard macOS icon area (824px inside the 1024px canvas). -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile-fill)" filter="url(#tile-shadow)"/>
+
+  <g clip-path="url(#tile-shape)">
+    <!-- Record -->
+    <g transform="translate(610 400)">
+      <circle r="240" fill="#111"/>
+      <g fill="none" stroke="#2e2d2a" stroke-width="2">
+        <circle r="226"/><circle r="212"/><circle r="198"/><circle r="184"/>
+        <circle r="170"/><circle r="156"/><circle r="142"/><circle r="128"/><circle r="114"/>
+      </g>
+      <circle r="240" fill="url(#vinyl-sheen)"/>
+      <circle r="84" fill="#cb473d"/>
+      <circle r="84" fill="none" stroke="#9b1f1b" stroke-width="4"/>
+      <circle r="12" fill="#f7f6f2"/>
+    </g>
+
+    <!-- Sleeve, with lines standing in for the liner notes -->
+    <g filter="url(#sleeve-shadow)">
+      <rect x="150" y="420" width="430" height="430" rx="14" fill="#f7f6f2"/>
+    </g>
+    <rect x="200" y="476" width="230" height="22" rx="4" fill="#111"/>
+    <g fill="#8c8a84">
+      <rect x="200" y="534" width="330" height="10" rx="5"/>
+      <rect x="200" y="562" width="300" height="10" rx="5"/>
+      <rect x="200" y="590" width="318" height="10" rx="5"/>
+      <rect x="200" y="618" width="210" height="10" rx="5"/>
+    </g>
+    <!-- Small mark from the favicon -->
+    <circle cx="512" cy="782" r="30" fill="#111"/>
+    <circle cx="512" cy="782" r="10" fill="#b6322b"/>
+  </g>
+</svg>

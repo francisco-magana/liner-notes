@@ -1,4 +1,8 @@
-# Liner Notes
+<p align="center">
+  <img src="build/icon.png" alt="Liner Notes icon" width="128" height="128">
+</p>
+
+<h1 align="center">Liner Notes</h1>
 
 A personal song journal that runs on your own computer. Keep a library of songs, annotate lyrics line by line, write dated reflections, and browse a monthly listening diary.
 
@@ -63,6 +67,7 @@ To move your library from one to the other, quit both and copy the file across.
 | `npm run dev`              | Start and restart automatically when server files change |
 | `npm run app`              | Open the desktop app without installing it            |
 | `npm run dist`             | Build the desktop installer into `dist/`              |
+| `npm run icon`             | Render `build/icon.svg` to the app icon `build/icon.png` |
 
 ## Configuration
 
@@ -97,7 +102,10 @@ A single Node.js process serves both the API and the web app. The desktop app ru
 electron/
   main.js       Desktop app: starts the server, opens the window
 build/
-  icon.png      Desktop app icon
+  icon.svg      Desktop app icon (source)
+  icon.png      Rendered by `npm run icon`; electron-builder makes the .icns/.ico from it
+scripts/
+  render-icon.js
 server/
   index.js      `npm start`: starts the server from environment settings
   server.js     startServer(): database, store and Express app, listening
