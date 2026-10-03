@@ -40,17 +40,13 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 `;
 
-/**
- * Opens the SQLite database, creating the file and tables when needed.
- * `isNew` tells whether the file was just created.
- */
+/** Opens the SQLite database, creating the file and tables when needed. */
 export function openDatabase(filePath) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const isNew = !fs.existsSync(filePath);
   const db = new DatabaseSync(filePath);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   db.exec(SCHEMA);
-  return { db, isNew };
+  return db;
 }
 
 /** Runs `work` in a transaction: commits its changes, or rolls them all back if it throws. */

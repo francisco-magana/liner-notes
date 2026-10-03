@@ -1,20 +1,52 @@
 {
   "name": "liner-notes",
+  "productName": "Liner Notes",
   "version": "1.0.0",
   "private": true,
   "description": "A personal song journal: library, line-by-line lyric notes, reflections and a listening diary.",
   "type": "module",
+  "main": "electron/main.js",
   "engines": {
     "node": ">=22.13"
   },
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning server/index.js",
     "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
-    "reset": "node --disable-warning=ExperimentalWarning server/reset.js"
+    "app": "electron .",
+    "dist": "electron-builder"
   },
   "dependencies": {
     "express": "^5.2.1",
     "htm": "^3.1.1",
     "preact": "^11.0.0"
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.linernotes.app",
+    "files": [
+      "server/**",
+      "public/**",
+      "electron/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.music",
+      "identity": "-",
+      "hardenedRuntime": false
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Audio"
+    }
   }
 }

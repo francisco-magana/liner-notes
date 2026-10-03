@@ -26,11 +26,34 @@ npm start
 
 Then open **http://localhost:4321**.
 
-On first run the app creates `data/linernotes.db` and fills it with a small demo library. To start empty instead:
+On first run the app creates an empty library in `data/linernotes.db`.
+
+## Desktop app
+
+Liner Notes can also be installed as a desktop app (built with [Electron](https://www.electronjs.org)). Installers aren't published, so you build one on your own computer. Each system builds its own installer: build on a Mac for macOS, on Windows for Windows.
 
 ```bash
-npm run reset -- --empty
+npm install
+npm run dist
 ```
+
+The installer goes in `dist/`:
+
+- **macOS:** open `Liner Notes-<version>-arm64.dmg` and drag **Liner Notes** into Applications. A build you made yourself opens normally. If you copied the `.dmg` from another computer, macOS may say the app is damaged; run `xattr -cr "/Applications/Liner Notes.app"` once to fix it.
+- **Windows:** run `Liner Notes Setup <version>.exe`. If SmartScreen warns about an unknown publisher, click **More info**, then **Run anyway**.
+- **Linux:** make the `.AppImage` executable (`chmod +x`) and run it.
+
+To try the desktop app without installing it, run `npm run app`.
+
+The desktop app keeps its own library, separate from the browser version's `data/linernotes.db`:
+
+| System  | Database file                                              |
+| ------- | ---------------------------------------------------------- |
+| macOS   | `~/Library/Application Support/Liner Notes/linernotes.db`  |
+| Windows | `%APPDATA%\Liner Notes\linernotes.db`                      |
+| Linux   | `~/.config/Liner Notes/linernotes.db`                      |
+
+To move your library from one to the other, quit both and copy the file across.
 
 ## Scripts
 
@@ -38,8 +61,8 @@ npm run reset -- --empty
 | -------------------------- | ----------------------------------------------------- |
 | `npm start`                | Start the app                                         |
 | `npm run dev`              | Start and restart automatically when server files change |
-| `npm run reset`            | Delete the database and recreate it with demo songs   |
-| `npm run reset -- --empty` | Delete the database and start with an empty library   |
+| `npm run app`              | Open the desktop app without installing it            |
+| `npm run dist`             | Build the desktop installer into `dist/`              |
 
 ## Configuration
 
@@ -50,12 +73,12 @@ Optional environment variables:
 | `PORT`    | `4321`               | Port to listen on                                                  |
 | `HOST`    | `127.0.0.1`          | Interface to bind. Set `0.0.0.0` to allow other devices on your network |
 | `DB_PATH` | `data/linernotes.db` | Where the SQLite database lives                                    |
-| `SEED`    | `1`                  | Set to `0` to skip the demo songs when a new database is created   |
 
 ## Your data
 
-- Everything (songs, lyrics, notes, reflections, album art, settings) is in the single file `data/linernotes.db`. It is ignored by git.
-- **Back up:** stop the app and copy that file. **Restore:** put the copy back.
+- Everything (songs, lyrics, notes, reflections, album art, settings) is in a single file: `data/linernotes.db` for the browser version (ignored by git), or the file listed under [Desktop app](#desktop-app).
+- **Back up:** quit the app and copy that file. **Restore:** put the copy back.
+- **Start over:** quit the app and delete the file (plus any `-wal`/`-shm` files next to it). An empty library is created on the next start.
 - Album art is stored in the database too, so the file is all you need.
 
 ## Spotify (optional)
@@ -68,19 +91,22 @@ The credentials are stored in the local database. All Spotify requests go throug
 
 ## How it's built
 
-A single Node.js process serves both the API and the web app.
+A single Node.js process serves both the API and the web app. The desktop app runs that same server inside Electron, on a random local port, and shows it in a window.
 
 ```
+electron/
+  main.js       Desktop app: starts the server, opens the window
+build/
+  icon.png      Desktop app icon
 server/
-  index.js      Startup: open the database, start listening
+  index.js      `npm start`: starts the server from environment settings
+  server.js     startServer(): database, store and Express app, listening
   app.js        Express app: API, frontend files, error handling
   config.js     Environment variables and paths
   database.js   Schema, connection (node:sqlite) and transactions
   errors.js     HttpError: errors shown to the user
   artInput.js   Album art sent by the client: data URLs, downloads, stored-art URLs
   spotify.js    Spotify client-credentials client
-  seed.js       Demo library
-  reset.js      `npm run reset`
   routes/       REST endpoints under /api (songs and reflections, art, settings, spotify)
   store/        Database access, one file per table, plus input validation
 public/
