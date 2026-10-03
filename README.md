@@ -131,3 +131,17 @@ public/
 - **Styles:** each component folder has its own stylesheet, such as `library/library.css`, using `block__element--modifier` class names. States like `is-active` are modifier classes. Only runtime values (album art images and bar-chart widths) are set inline. New stylesheets must be linked in `index.html` after `styles.css`.
 - **Backend:** [Express 5](https://expressjs.com) plus the built-in `node:sqlite`.
 - **Tables:** `songs`, `reflections` (cascade-deleted with their song), `art` (image BLOBs, shared by songs from the same album, and pruned once nothing uses them) and `settings`.
+
+## Screenshots
+
+**Library:** songs with album art, ratings and filters.
+
+![Library](docs/screenshots/library.png)
+
+**Song page:** lyrics with notes on individual lines.
+
+![Song page with lyrics and notes](docs/screenshots/lyrics.png)
+
+**Diary:** days with entries, stats, and rating and mood breakdowns for the month.
+
+![Diary](docs/screenshots/diary.png)
