@@ -6,7 +6,7 @@ import { imageStyle } from '../../lib/covers.js';
 import { SEARCH_TYPES, resultSubtitle, resultThumbnail, resultToFormFields } from '../../lib/spotify.js';
 
 /**
- * "Load from Spotify" box on the song form. `onFill` receives form fields from a
+ * "Search with Spotify" box on the song form. `onFill` receives form fields from a
  * result. `onImportAlbum` adds a whole album; its errors are shown inside the panel.
  */
 export function SpotifyPanel({ isConfigured, currentGenre, firstHeard, onFill, onImportAlbum, onOpenSettings }) {
@@ -55,7 +55,7 @@ export function SpotifyPanel({ isConfigured, currentGenre, firstHeard, onFill, o
   return html`
     <div class="spotify-panel">
       <div class="lbl spotify-panel__header">
-        <span class="red spotify-panel__title">LOAD FROM SPOTIFY</span>
+        <span class="red spotify-panel__title">SEARCH WITH SPOTIFY</span>
         <div class="spotify-panel__types">
           ${SEARCH_TYPES.map(option => html`
             <span key=${option.type} class=${classNames('click pill spotify-panel__type', searchType === option.type && 'is-active')}
