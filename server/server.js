@@ -1,5 +1,5 @@
 // Starts the Liner Notes server: opens the database, then serves the API and the web app.
-// Used by both `npm start` (server/index.js) and the desktop app (electron/main.js).
+// Used by `npm start` (server/index.js).
 import { createApp } from './app.js';
 import { openDatabase } from './database.js';
 import { createSpotifyClient } from './spotify.js';

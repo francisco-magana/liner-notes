@@ -1,19 +1,19 @@
 {
   "name": "liner-notes",
-  "productName": "Liner Notes",
   "version": "1.0.0",
   "private": true,
   "description": "A personal song journal: library, line-by-line lyric notes, reflections and a listening diary.",
   "type": "module",
-  "main": "electron/main.js",
   "engines": {
     "node": ">=22.13"
   },
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning server/index.js",
     "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
-    "app": "electron .",
-    "dist": "electron-builder",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "vendor": "node scripts/copy-vendor.js",
     "icon": "node scripts/render-icon.js"
   },
   "dependencies": {
@@ -23,32 +23,6 @@
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
-    "electron": "^44.5.1",
-    "electron-builder": "^26.15.3"
-  },
-  "build": {
-    "appId": "com.linernotes.app",
-    "files": [
-      "server/**",
-      "public/**",
-      "electron/**",
-      "package.json"
-    ],
-    "directories": {
-      "output": "dist"
-    },
-    "mac": {
-      "target": "dmg",
-      "category": "public.app-category.music",
-      "identity": "-",
-      "hardenedRuntime": false
-    },
-    "win": {
-      "target": "nsis"
-    },
-    "linux": {
-      "target": "AppImage",
-      "category": "Audio"
-    }
+    "@tauri-apps/cli": "^2.12.1"
   }
 }
