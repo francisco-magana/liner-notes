@@ -1,5 +1,5 @@
 // `npm run icon`: renders build/icon.svg to build/icon.png (1024×1024).
-// electron-builder makes the macOS .icns and Windows .ico from that PNG.
+// `npx tauri icon build/icon.png -o src-tauri/icons` makes the desktop app icons from that PNG.
 import { Resvg } from '@resvg/resvg-js';
 import fs from 'node:fs';
 import path from 'node:path';

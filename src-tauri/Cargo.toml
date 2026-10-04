@@ -1,0 +1,40 @@
+[package]
+name = "liner-notes"
+version = "1.0.0"
+description = "A personal song journal: library, line-by-line lyric notes, reflections and a listening diary."
+authors = ["francisco-magana"]
+edition = "2024"
+rust-version = "1.90"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "liner_notes_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.1", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+tauri = { version = "2.12.1", features = [] }
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+reqwest = { version = "0.13.5", default-features = false, features = ["json", "native-tls"] }
+uuid = { version = "1.27.0", features = ["v4"] }
+chrono = { version = "0.4.45", default-features = false, features = ["clock", "std"] }
+base64 = "0.23.1"
+regex = "1.13.1"
+
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+tauri-plugin-single-instance = "2.5.2"
+
+# Smaller release builds: strip debug symbols, optimize across crates and for size.
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+opt-level = "s"
+
+[dev-dependencies]
+tokio = { version = "1.53.2", features = ["macros", "rt"] }

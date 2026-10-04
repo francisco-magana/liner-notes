@@ -1,15 +1,8 @@
 // The Express app: the API, the frontend files and error handling.
 import express from 'express';
 import path from 'node:path';
-import { ROOT_DIR } from './config.js';
+import { ROOT_DIR, VENDOR_FILES } from './config.js';
 import { apiRoutes } from './routes/index.js';
-
-/** The ES-module libraries the frontend imports (see the import map in index.html). */
-const VENDOR_FILES = {
-  '/vendor/preact.mjs': 'node_modules/preact/dist/preact.mjs',
-  '/vendor/preact-hooks.mjs': 'node_modules/preact/hooks/dist/hooks.mjs',
-  '/vendor/htm.mjs': 'node_modules/htm/dist/htm.mjs'
-};
 
 export function createApp(store, spotify) {
   const app = express();
