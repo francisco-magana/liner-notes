@@ -14,11 +14,11 @@
 .reflection-editor__insert { color: var(--ink2); }
 .reflection-editor__insert.is-active { color: var(--red); }
 .reflection-editor__spacer { flex: 1; }
+/* Spans the full column so the scrollbar sits at the far right; the right padding keeps lines at 680px. */
 .reflection-editor__text {
-  min-height: 360px; max-width: 680px; resize: vertical; border: 0; background: transparent;
-  outline: none; font-size: 21px; line-height: 1.6;
-}
-.reflection-editor__actions { display: flex; gap: 12px; font-weight: 500; font-size: 12px; letter-spacing: .06em; }
+  box-sizing: border-box; min-height: 360px; width: 100%; padding: 0 max(16px, calc(100% - 680px)) 0 0;
+  resize: vertical; border: 0; background: transparent; outline: none; font-size: 21px; line-height: 1.6;
+}.reflection-editor__actions { display: flex; gap: 12px; font-weight: 500; font-size: 12px; letter-spacing: .06em; }
 .reflection-editor__save { padding: 14px 28px; background: var(--ink); color: var(--bg); }
 .reflection-editor__cancel { padding: 14px 22px; border: 1px solid var(--ink); }
 .reflection-editor__delete { padding: 14px 0; }

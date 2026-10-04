@@ -16,6 +16,11 @@
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Archivo', sans-serif; -webkit-font-smoothing: antialiased; }
 textarea, input { font-family: inherit; color: inherit; }
 ::placeholder { color: var(--ph); }
+textarea::-webkit-scrollbar { width: 6px; }
+textarea::-webkit-scrollbar-track { background: transparent; }
+textarea::-webkit-scrollbar-thumb { background: var(--line); }
+textarea::-webkit-scrollbar-thumb:hover { background: var(--mute); }
+textarea::-webkit-scrollbar-corner { background: transparent; }
 
 .app { min-height: 100vh; min-width: 1100px; background: var(--bg); color: var(--ink); }
 
