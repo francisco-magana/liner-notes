@@ -39,6 +39,16 @@ export function SpotifyPanel({ isConfigured, currentGenre, firstHeard, onFill, o
     }
   }
 
+  function closeResults() {
+    setResults([]);
+    setError('');
+  }
+
+  function useResult(type, item) {
+    onFill(resultToFormFields(type, item, currentGenre));
+    closeResults();
+  }
+
   async function importAlbum(album) {
     setIsLoading(true);
     setError('');
@@ -72,11 +82,17 @@ export function SpotifyPanel({ isConfigured, currentGenre, firstHeard, onFill, o
           ${isLoading && html`<span class="lbl muted">SEARCHING…</span>`}
           ${error && !isLoading && html`<span class="lbl red">${error}</span>`}
           ${results.length > 0 && html`
-            <div class="spotify-panel__results">
-              ${results.map(({ type, item }) => html`
-                <${SearchResult} key=${item.id} type=${type} item=${item}
-                  onUse=${() => onFill(resultToFormFields(type, item, currentGenre))}
-                  onAddAll=${() => importAlbum(item)} />`)}
+            <div class="spotify-panel__results-box">
+              <div class="lbl muted spotify-panel__results-header">
+                <span>${results.length} RESULTS</span>
+                <span class="click h-red spotify-panel__results-close" onClick=${closeResults}>✕ CLOSE</span>
+              </div>
+              <div class="spotify-panel__results">
+                ${results.map(({ type, item }) => html`
+                  <${SearchResult} key=${item.id} type=${type} item=${item}
+                    onUse=${() => useResult(type, item)}
+                    onAddAll=${() => importAlbum(item)} />`)}
+              </div>
             </div>`}
         </div>` : html`
         <div class="lbl muted spotify-panel__setup">

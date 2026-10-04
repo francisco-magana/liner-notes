@@ -71,6 +71,9 @@
   outline: none; font-size: 16px; padding: 6px 0;
 }
 .spotify-panel__search-button { background: var(--ink); color: var(--bg); padding: 8px 14px; }
+.spotify-panel__results-box { display: flex; flex-direction: column; gap: 6px; }
+.spotify-panel__results-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.spotify-panel__results-close { color: var(--ink); white-space: nowrap; }
 .spotify-panel__results { display: flex; flex-direction: column; max-height: 248px; overflow: auto; }
 .spotify-panel__setup { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .spotify-panel__setup-link { color: var(--ink); border-bottom: 1px solid var(--ink); white-space: nowrap; }
