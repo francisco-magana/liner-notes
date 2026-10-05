@@ -13,8 +13,13 @@ export const lyricTextLines = song => (song.lyrics || '').split('\n').filter(lin
 
 export const hasLyrics = song => lyricTextLines(song).length > 0;
 
-export const averageRating = songs =>
-  (songs.reduce((total, song) => total + (song.rating || 0), 0) / songs.length).toFixed(1);
+/** Mean star rating of the rated songs; unrated songs are ignored. */
+export const averageRating = songs => {
+  const rated = songs.filter(song => song.rating > 0);
+  return rated.length
+    ? (rated.reduce((total, song) => total + song.rating, 0) / rated.length).toFixed(1)
+    : '—';
+};
 
 export const newestFirst = (first, second) => second.date.localeCompare(first.date);
 

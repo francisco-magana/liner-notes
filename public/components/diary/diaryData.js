@@ -1,6 +1,7 @@
 // Pure data logic for the diary view.
 
 import { countWords, starString } from '../../lib/format.js';
+import { averageRating } from '../../lib/songs.js';
 
 /** `{ year, month }` of today, with month 0–11. */
 export function currentMonth() {
@@ -56,12 +57,9 @@ export function countEntriesPerDay(entries) {
 export function monthStats(songs, entries, month) {
   const songsTouched = [...new Set(entries.map(entry => entry.song))];
   const reflections = songs.flatMap(song => song.reflections.filter(reflection => isInMonth(reflection.date, month)));
-  const averageRating = songsTouched.length
-    ? (songsTouched.reduce((total, song) => total + song.rating, 0) / songsTouched.length).toFixed(1)
-    : '—';
   const wordsWritten = reflections.reduce((total, reflection) => total + countWords(reflection.text), 0);
 
-  return { songsTouched: songsTouched.length, averageRating, reflections: reflections.length, wordsWritten };
+  return { songsTouched: songsTouched.length, averageRating: averageRating(songsTouched), reflections: reflections.length, wordsWritten };
 }
 
 /** One row per star rating, 5 down to 1, for the whole library. */
