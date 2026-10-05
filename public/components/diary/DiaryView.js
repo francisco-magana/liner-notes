@@ -3,7 +3,7 @@ import { classNames } from '../../lib/classNames.js';
 import { MONTH_NAMES, padNumber, shortWeekday, starString } from '../../lib/format.js';
 import { BarChart } from './BarChart.js';
 import {
-  buildMonthEntries, countEntriesPerDay, daysInMonth, monthStats, ratingDistribution, shiftMonth, topMoods
+  buildMonthEntries, countEntriesPerDay, currentMonth, daysInMonth, monthStats, ratingDistribution, shiftMonth, topMoods
 } from './diaryData.js';
 
 /** Monthly overview. `month` is `{ year, month }` and lives in the App so it survives navigation. */
@@ -11,6 +11,7 @@ export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
   const entries = buildMonthEntries(songs, month);
   const stats = monthStats(songs, entries, month);
   const moods = topMoods(songs);
+  const today = todayInMonth(month);
   const statTiles = [
     { value: padNumber(stats.songsTouched), label: 'SONGS LISTENED TO' },
     { value: stats.averageRating, label: 'AVG RATING' },
@@ -31,6 +32,10 @@ export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
             <span class="click h-red" title="Previous year" onClick=${() => onMonthChange(shiftMonth(month, -12))}>←</span>
             <span>${month.year}</span>
             <span class="click h-red" title="Next year" onClick=${() => onMonthChange(shiftMonth(month, 12))}>→</span>
+            <span
+              class=${classNames('diary__today', today === null ? 'click h-red' : 'muted')}
+              title="Go to current month"
+              onClick=${() => today === null && onMonthChange(currentMonth())}>TODAY</span>
           </div>
         </div>
         <div class="diary__stats">
@@ -40,7 +45,7 @@ export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
               <span class="mono muted diary__stat-label">${tile.label}</span>
             </div>`)}
         </div>
-        <${DayGrid} dayCount=${daysInMonth(month)} entriesPerDay=${countEntriesPerDay(entries)} today=${todayInMonth(month)} />
+        <${DayGrid} dayCount=${daysInMonth(month)} entriesPerDay=${countEntriesPerDay(entries)} today=${today} />
         <div class="diary__charts">
           <div class="diary__chart">
             <span class="lbl red">RATINGS · WHOLE LIBRARY</span>
