@@ -1,6 +1,6 @@
 // Pure data logic for the diary view.
 
-import { countWords, excerpt, starString } from '../../lib/format.js';
+import { countWords, starString } from '../../lib/format.js';
 
 /** `{ year, month }` of today, with month 0–11. */
 export function currentMonth() {
@@ -32,7 +32,7 @@ export function buildMonthEntries(songs, month) {
   for (const song of songs) {
     const monthReflections = song.reflections.filter(reflection => isInMonth(reflection.date, month));
     for (const reflection of monthReflections) {
-      entries.push({ key: reflection.id, date: reflection.date, song, text: excerpt(reflection.text, 110) });
+      entries.push({ key: reflection.id, date: reflection.date, song, text: reflection.text.trim() });
     }
     const wasAddedThisMonth = isInMonth(song.created, month);
     if (wasAddedThisMonth && !monthReflections.some(reflection => sameDay(reflection.date, song.created))) {

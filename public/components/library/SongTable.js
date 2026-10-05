@@ -21,7 +21,7 @@ function SongRow({ song, position, onOpen }) {
       <div class="cover song-table__cover" style=${coverStyle(song)}></div>
       <div class="song-table__name">
         <span class="ellipsis song-table__title">${song.title.toUpperCase()}</span>
-        <span class="muted">${song.artist.toUpperCase()}</span>
+        <span class="ellipsis muted">${song.artist.toUpperCase()}</span>
       </div>
       <span class="ellipsis song-table__album">${(song.album || '—').toUpperCase()}</span>
       <span class="red song-table__stars">${starString(song.rating)}</span>

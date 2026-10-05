@@ -10,6 +10,7 @@ import {
 export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
   const entries = buildMonthEntries(songs, month);
   const stats = monthStats(songs, entries, month);
+  const moods = topMoods(songs);
   const statTiles = [
     { value: padNumber(stats.songsTouched), label: 'SONGS LISTENED TO' },
     { value: stats.averageRating, label: 'AVG RATING' },
@@ -21,11 +22,15 @@ export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
     <div class="diary">
       <div class="diary__main">
         <div class="diary__header">
-          <div class="display diary__month">${MONTH_NAMES[month.month]}</div>
+          <div class="diary__month-row">
+            <span class="mono click h-red diary__month-arrow" title="Previous month" onClick=${() => onMonthChange(shiftMonth(month, -1))}>←</span>
+            <div class="display diary__month">${MONTH_NAMES[month.month]}</div>
+            <span class="mono click h-red diary__month-arrow" title="Next month" onClick=${() => onMonthChange(shiftMonth(month, 1))}>→</span>
+          </div>
           <div class="mono diary__month-nav">
-            <span class="click h-red" onClick=${() => onMonthChange(shiftMonth(month, -1))}>←</span>
+            <span class="click h-red" title="Previous year" onClick=${() => onMonthChange(shiftMonth(month, -12))}>←</span>
             <span>${month.year}</span>
-            <span class="click h-red" onClick=${() => onMonthChange(shiftMonth(month, 1))}>→</span>
+            <span class="click h-red" title="Next year" onClick=${() => onMonthChange(shiftMonth(month, 12))}>→</span>
           </div>
         </div>
         <div class="diary__stats">
@@ -35,7 +40,7 @@ export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
               <span class="mono muted diary__stat-label">${tile.label}</span>
             </div>`)}
         </div>
-        <${DayGrid} dayCount=${daysInMonth(month)} entriesPerDay=${countEntriesPerDay(entries)} />
+        <${DayGrid} dayCount=${daysInMonth(month)} entriesPerDay=${countEntriesPerDay(entries)} today=${todayInMonth(month)} />
         <div class="diary__charts">
           <div class="diary__chart">
             <span class="lbl red">RATINGS · WHOLE LIBRARY</span>
@@ -43,7 +48,9 @@ export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
           </div>
           <div class="diary__chart">
             <span class="lbl red">TOP MOODS · WHOLE LIBRARY</span>
-            <${BarChart} rows=${topMoods(songs)} variant="moods" />
+            ${moods.length
+              ? html`<${BarChart} rows=${moods} variant="moods" />`
+              : html`<span class="lbl muted">NO MOODS TAGGED YET.</span>`}
           </div>
         </div>
       </div>
@@ -51,18 +58,24 @@ export function DiaryView({ songs, month, onMonthChange, onOpenSong }) {
     </div>`;
 }
 
-/** One square per day: grey for none, ink for one entry, red for two or more. */
-function DayGrid({ dayCount, entriesPerDay }) {
+/** Today's day of the month if `month` is the current month, otherwise null. */
+function todayInMonth({ year, month }) {
+  const now = new Date();
+  return now.getFullYear() === year && now.getMonth() === month ? now.getDate() : null;
+}
+
+/** One square per day: grey for none, red for one or more entries. Today gets an outline. */
+function DayGrid({ dayCount, entriesPerDay, today }) {
   return html`
     <div class="day-grid">
       <div class="lbl day-grid__legend">
-        <span class="red">DAYS WITH ENTRIES</span><span class="muted">GREY NONE · BLACK 1 · RED 2+</span>
+        <span class="red">DAYS WITH ENTRIES</span><span class="muted">GREY NONE · RED 1+</span>
       </div>
       <div class="day-grid__days">
         ${Array.from({ length: dayCount }, (_, index) => {
           const day = index + 1;
           const count = entriesPerDay[day] || 0;
-          const dayClass = classNames('mono day-grid__day', count === 1 && 'day-grid__day--one', count > 1 && 'day-grid__day--many');
+          const dayClass = classNames('mono day-grid__day', count > 0 && 'day-grid__day--filled', day === today && 'day-grid__day--today');
           return html`<div key=${day} class=${dayClass} title=${count + (count === 1 ? ' entry' : ' entries')}>${padNumber(day)}</div>`;
         })}
       </div>

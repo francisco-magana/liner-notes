@@ -57,17 +57,17 @@
 /* Song and artist tables */
 .song-table, .artist-table { display: flex; flex-direction: column; }
 .song-table__header, .song-table__row {
-  display: grid; grid-template-columns: 30px 44px minmax(0, 1fr) 150px 84px 50px 70px; gap: 14px;
+  display: grid; grid-template-columns: 30px 44px minmax(0, 1fr) 150px 84px 50px 70px; gap: 18px;
 }
 .artist-table__header, .artist-table__row {
-  display: grid; grid-template-columns: 30px 44px minmax(0, 1fr) 60px 70px 180px 70px; gap: 14px;
+  display: grid; grid-template-columns: 30px 44px minmax(0, 1fr) 60px 70px 180px 70px; gap: 18px;
 }
-.song-table__header, .artist-table__header { font-weight: 500; font-size: 10px; letter-spacing: .06em; padding-bottom: 8px; }
-.song-table__row, .artist-table__row { align-items: center; padding: 6px 0; border-top: 1px solid var(--rule); font-size: 12px; }
+.song-table__header, .artist-table__header { font-weight: 500; font-size: 10px; letter-spacing: .06em; padding: 0 16px 8px; }
+/* Side padding gives the hover highlight room; the header uses the same so columns line up */
+.song-table__row, .artist-table__row { align-items: center; padding: 10px 16px; border-top: 1px solid var(--rule); font-size: 12px; }
 .song-table__cover, .artist-table__cover { width: 44px; height: 44px; }
 .artist-table__cover { border-radius: 50%; }
-.song-table__name, .artist-table__name { display: flex; flex-direction: column; gap: 2px; }
-.song-table__name { min-width: 0; }
+.song-table__name, .artist-table__name { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .song-table__title, .artist-table__title { font-weight: 500; }
 .song-table__album, .artist-table__top-song { color: var(--ink2); }
 .song-table__stars { letter-spacing: 1px; }

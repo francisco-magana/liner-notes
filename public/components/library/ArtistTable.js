@@ -16,8 +16,8 @@ export function ArtistTable({ artists, onSelectArtist }) {
           <span class="muted">${padNumber(index + 1)}</span>
           <div class="cover artist-table__cover" style=${coverStyle(artist.coverSong)}></div>
           <div class="artist-table__name">
-            <span class="artist-table__title">${artist.name.toUpperCase()}</span>
-            <span class="muted">${(artist.genre || '—').toUpperCase()}</span>
+            <span class="ellipsis artist-table__title">${artist.name.toUpperCase()}</span>
+            <span class="ellipsis muted">${(artist.genre || '—').toUpperCase()}</span>
           </div>
           <span>${padNumber(artist.songs.length)}</span>
           <span class="red">★ ${averageRating(artist.songs)}</span>

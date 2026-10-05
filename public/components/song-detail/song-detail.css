@@ -74,7 +74,7 @@
 }
 .reflection-list__item {
   display: grid; grid-template-columns: 120px minmax(0, 1fr) 60px; gap: 24px;
-  border-top: 1px solid var(--rule); padding: 16px 0;
+  border-top: 1px solid var(--rule); padding: 20px 16px;
 }
 .reflection-list__date { display: flex; flex-direction: column; gap: 2px; }
 .reflection-list__day { font-size: 36px; line-height: 1; font-weight: 500; font-stretch: 72%; }

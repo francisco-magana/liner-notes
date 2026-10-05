@@ -2,6 +2,8 @@
 .diary { padding: 4px 40px 60px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 56px; }
 .diary__main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
 .diary__header { display: flex; align-items: flex-end; justify-content: space-between; }
+.diary__month-row { display: flex; align-items: center; gap: 18px; min-width: 0; }
+.diary__month-arrow { font-size: 28px; font-weight: 500; flex-shrink: 0; user-select: none; }
 .diary__month { font-size: clamp(72px, 8vw, 140px); line-height: .82; min-width: 0; }
 .diary__month-nav { display: flex; gap: 14px; flex-shrink: 0; font-weight: 500; font-size: 12px; padding-bottom: 6px; }
 .diary__stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
@@ -11,13 +13,13 @@
 .diary__charts { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
 .diary__chart { display: flex; flex-direction: column; gap: 8px; }
 
-/* Day grid: grey none, ink one entry, red two or more */
+/* Day grid: grey none, red one or more entries */
 .day-grid { display: flex; flex-direction: column; gap: 10px; }
 .day-grid__legend { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; white-space: nowrap; }
 .day-grid__days { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; }
 .day-grid__day { height: 40px; box-sizing: border-box; padding: 4px; font-size: 9px; background: var(--track); color: var(--mute); }
-.day-grid__day--one { background: var(--ink); color: var(--bg); }
-.day-grid__day--many { background: var(--red); color: var(--bg); }
+.day-grid__day--filled { background: var(--red); color: var(--bg); }
+.day-grid__day--today { outline: 2px solid var(--ink); outline-offset: 1px; }
 
 /* Bar charts: ratings have ink bars and red labels, moods the other way round */
 .bar-chart__row { display: grid; grid-template-columns: 70px 1fr 24px; gap: 10px; align-items: center; font-size: 11px; }
@@ -30,18 +32,23 @@
 .bar-chart__row--moods .bar-chart__bar { background: var(--red); }
 
 /* Entry list */
-.diary-entries { display: flex; flex-direction: column; border-left: 1px solid var(--rule); padding-left: 28px; }
-.diary-entries__title { padding-bottom: 12px; }
-.diary-entries__empty { border-top: 1px solid var(--rule); padding-top: 14px; }
-.diary-entry { display: grid; grid-template-columns: 56px 1fr; gap: 14px; border-top: 1px solid var(--rule); padding: 12px 0; }
+/* Rows carry their own side padding so the hover highlight has room; the title and empty label match it */
+.diary-entries { display: flex; flex-direction: column; border-left: 1px solid var(--rule); padding-left: 12px; min-width: 0; }
+.diary-entries__title { padding: 0 16px 12px; }
+.diary-entries__empty { border-top: 1px solid var(--rule); padding: 14px 16px 0; }
+.diary-entry { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; border-top: 1px solid var(--rule); padding: 16px; }
 .diary-entry__date { display: flex; flex-direction: column; gap: 2px; }
 .diary-entry__day { font-size: 32px; line-height: 1; font-weight: 500; font-stretch: 72%; }
 .diary-entry__weekday { font-weight: 500; font-size: 10px; }
-.diary-entry__body { display: flex; flex-direction: column; gap: 4px; }
+.diary-entry__body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .diary-entry__heading {
   display: flex; justify-content: space-between; gap: 10px;
   font-weight: 500; font-size: 11px; line-height: 1.3; letter-spacing: .04em;
 }
 .diary-entry__title { min-width: 0; }
-.diary-entry__stars { white-space: nowrap; }
-.diary-entry__text { font-size: 14px; line-height: 1.4; color: var(--ink3); text-wrap: pretty; }
+.diary-entry__stars { white-space: nowrap; flex-shrink: 0; }
+/* Keeps the reflection's line breaks and cuts it to two lines; the browser adds "…" when there is more */
+.diary-entry__text {
+  font-size: 14px; line-height: 1.4; color: var(--ink3); text-wrap: pretty; white-space: pre-line;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+}
