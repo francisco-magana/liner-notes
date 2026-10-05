@@ -14,11 +14,14 @@
 }
 .nav__logo { font-weight: 600; }
 .nav__links { display: flex; gap: 28px; }
-.nav__link { padding-bottom: 2px; border-bottom: 1px solid transparent; }
+.nav__link { padding-bottom: 2px; border-bottom: 1px solid transparent; transition: color .15s, border-color .15s; }
+.nav__link:hover { border-bottom-color: var(--line); }
 .nav__link.is-active { border-bottom-color: var(--ink); }
 .nav__link--add { color: var(--red); }
+.nav__link--add:hover { color: var(--redInk); border-bottom-color: var(--red); }
 .nav__link--add.is-active { border-bottom-color: var(--red); }
-.nav__settings { padding-bottom: 2px; color: var(--mute); }
+.nav__settings { color: var(--mute); }
+.nav__settings:hover { color: var(--ink); border-bottom-color: var(--line); }
 
 /* Toast */
 .toast {

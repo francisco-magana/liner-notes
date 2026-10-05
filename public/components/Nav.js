@@ -12,8 +12,8 @@ export function Nav({ route, onLibrary, onDiary, onAddSong, onSettings }) {
       <div class="nav__links">
         <span class=${classNames('click nav__link', LIBRARY_VIEWS.includes(route.view) && 'is-active')} onClick=${onLibrary}>LIBRARY</span>
         <span class=${classNames('click nav__link', route.view === 'diary' && 'is-active')} onClick=${onDiary}>DIARY</span>
-        <span class=${classNames('click h-fade nav__link nav__link--add', isAddingSong && 'is-active')} onClick=${onAddSong}>+ ADD SONG</span>
-        <span class="click h-ink nav__settings" onClick=${onSettings}>SETTINGS</span>
+        <span class=${classNames('click nav__link nav__link--add', isAddingSong && 'is-active')} onClick=${onAddSong}>+ ADD SONG</span>
+        <span class="click nav__link nav__settings" onClick=${onSettings}>SETTINGS</span>
       </div>
     </div>`;
 }
