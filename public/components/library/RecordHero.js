@@ -25,8 +25,8 @@ export function RecordHero({ song, onOpenSong, onAddSong }) {
         <div class="click record-hero__heading" onClick=${hero.onClick}>
           <span class="mono record-hero__kicker">${hero.kicker}</span>
           <span class="record-hero__title">${hero.title}</span>
+          ${hero.caption && html`<span class="mono record-hero__caption">${hero.caption}</span>`}
         </div>
-        <div class="mono muted record-hero__caption">${hero.caption}</div>
       </div>
     </div>`;
 }

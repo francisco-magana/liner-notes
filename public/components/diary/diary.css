@@ -34,8 +34,14 @@
 
 /* Entry list */
 /* Rows carry their own side padding so the hover highlight has room; the title and empty label match it */
-.diary-entries { display: flex; flex-direction: column; border-left: 1px solid var(--rule); padding-left: 12px; min-width: 0; }
-.diary-entries__title { padding: 0 16px 12px; }
+/* Fills the window below the nav (80px) minus the diary's vertical padding (4px + 60px), so long months scroll here instead of the page */
+.diary-entries { display: flex; flex-direction: column; border-left: 1px solid var(--rule); padding-left: 12px; min-width: 0; height: calc(100vh - 144px); }
+.diary-entries__title { padding: 0 16px 12px; flex-shrink: 0; }
+.diary-entries__scroll { flex: 1; min-height: 0; overflow-y: auto; }
+.diary-entries__scroll::-webkit-scrollbar { width: 6px; }
+.diary-entries__scroll::-webkit-scrollbar-track { background: transparent; }
+.diary-entries__scroll::-webkit-scrollbar-thumb { background: var(--line); }
+.diary-entries__scroll::-webkit-scrollbar-thumb:hover { background: var(--mute); }
 .diary-entries__empty { border-top: 1px solid var(--rule); padding: 14px 16px 0; }
 .diary-entry { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; border-top: 1px solid var(--rule); padding: 16px; }
 .diary-entry__date { display: flex; flex-direction: column; gap: 2px; }

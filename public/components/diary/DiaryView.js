@@ -91,23 +91,25 @@ function EntryList({ entries, onOpenSong }) {
   return html`
     <div class="diary-entries">
       <div class="lbl red diary-entries__title">DIARY</div>
-      ${entries.map(entry => {
-        const date = new Date(entry.date);
-        return html`
-          <div key=${entry.key} class="click h-row diary-entry" onClick=${() => onOpenSong(entry.song.id)}>
-            <div class="diary-entry__date">
-              <span class="diary-entry__day">${padNumber(date.getDate())}</span>
-              <span class="mono muted diary-entry__weekday">${shortWeekday(date)}</span>
-            </div>
-            <div class="diary-entry__body">
-              <div class="mono diary-entry__heading">
-                <span class="ellipsis diary-entry__title">${entry.song.title.toUpperCase()}</span>
-                <span class="red diary-entry__stars">${starString(entry.song.rating)}</span>
+      <div class="diary-entries__scroll">
+        ${entries.map(entry => {
+          const date = new Date(entry.date);
+          return html`
+            <div key=${entry.key} class="click h-row diary-entry" onClick=${() => onOpenSong(entry.song.id)}>
+              <div class="diary-entry__date">
+                <span class="diary-entry__day">${padNumber(date.getDate())}</span>
+                <span class="mono muted diary-entry__weekday">${shortWeekday(date)}</span>
               </div>
-              <span class="diary-entry__text">${entry.text}</span>
-            </div>
-          </div>`;
-      })}
-      ${!entries.length && html`<span class="lbl muted diary-entries__empty">NO ENTRIES THIS MONTH.</span>`}
+              <div class="diary-entry__body">
+                <div class="mono diary-entry__heading">
+                  <span class="ellipsis diary-entry__title">${entry.song.title.toUpperCase()}</span>
+                  <span class="red diary-entry__stars">${starString(entry.song.rating)}</span>
+                </div>
+                <span class="diary-entry__text">${entry.text}</span>
+              </div>
+            </div>`;
+        })}
+        ${!entries.length && html`<span class="lbl muted diary-entries__empty">NO ENTRIES THIS MONTH.</span>`}
+      </div>
     </div>`;
 }

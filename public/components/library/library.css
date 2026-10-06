@@ -52,7 +52,7 @@
 }
 .record-hero__kicker { font-size: 10px; opacity: .7; letter-spacing: .06em; }
 .record-hero__title { font-size: 18px; letter-spacing: .02em; line-height: 1.1; }
-.record-hero__caption { position: absolute; left: 40px; bottom: 30px; font-size: 12px; }
+.record-hero__caption { margin-top: 6px; font-size: 11px; opacity: .7; letter-spacing: .04em; }
 
 /* Song and artist tables */
 .song-table, .artist-table { display: flex; flex-direction: column; }
